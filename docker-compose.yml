@@ -1,0 +1,97 @@
+version: "3.8"
+
+services:
+  # ─────────────────────────────────────────────
+  # MOSQUITTO — MQTT Broker
+  # ─────────────────────────────────────────────
+  mosquitto:
+    image: eclipse-mosquitto:2.0
+    container_name: ming_mosquitto
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+    volumes:
+      - ./mosquitto/config:/mosquitto/config:ro
+      - mosquitto_data:/mosquitto/data
+      - mosquitto_log:/mosquitto/log
+    networks:
+      - ming_net
+
+  # ─────────────────────────────────────────────
+  # INFLUXDB 2.x
+  # ─────────────────────────────────────────────
+  influxdb:
+    image: influxdb:2.7
+    container_name: ming_influxdb
+    restart: unless-stopped
+    ports:
+      - "8086:8086"
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME: admin
+      DOCKER_INFLUXDB_INIT_PASSWORD: adminpassword
+      DOCKER_INFLUXDB_INIT_ORG: myorg
+      DOCKER_INFLUXDB_INIT_BUCKET: gas_data
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: ming-token
+    volumes:
+      - influxdb_data:/var/lib/influxdb2
+      - influxdb_config:/etc/influxdb2
+    networks:
+      - ming_net
+
+  # ─────────────────────────────────────────────
+  # NODE-RED
+  # ─────────────────────────────────────────────
+  nodered:
+    image: nodered/node-red:latest
+    container_name: ming_nodered
+    restart: unless-stopped
+    ports:
+      - "1880:1880"
+    environment:
+      - TZ=America/Bogota
+    volumes:
+      - nodered_data:/data
+    depends_on:
+      - mosquitto
+      - influxdb
+    networks:
+      - ming_net
+
+  # ─────────────────────────────────────────────
+  # GRAFANA
+  # ─────────────────────────────────────────────
+  grafana:
+    image: grafana/grafana:latest
+    container_name: ming_grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - influxdb
+    networks:
+      - ming_net
+
+# ─────────────────────────────────────────────
+# VOLÚMENES PERSISTENTES
+# ─────────────────────────────────────────────
+volumes:
+  mosquitto_data:
+  mosquitto_log:
+  influxdb_data:
+  influxdb_config:
+  nodered_data:
+  grafana_data:
+
+# ─────────────────────────────────────────────
+# RED INTERNA
+# ─────────────────────────────────────────────
+networks:
+  ming_net:
+    driver: bridge

@@ -1,0 +1,91 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# ESPHome — NodeMCU v2 (ESP-12E) + Sensor de gas analógico MQ-135
+# Tópico MQTT: sensor/gas
+# ─────────────────────────────────────────────────────────────────────────────
+
+esphome:
+  name: gas-sensor
+  friendly_name: "Sensor de Gas MQ-135"
+
+esp8266:
+  board: nodemcuv2
+
+# ─── WiFi ────────────────────────────────────────────────────────────────────
+wifi:
+  ssid: "TU_SSID_WIFI"          # <-- Cambia por tu red WiFi
+  password: "TU_PASSWORD_WIFI"  # <-- Cambia por tu contraseña WiFi
+
+  # Portal de rescate si no conecta (AP de emergencia)
+  ap:
+    ssid: "GasSensor-Fallback"
+    password: "esphome123"
+
+captive_portal:
+
+# ─── Logging por serial (útil en desarrollo) ─────────────────────────────────
+logger:
+  level: INFO
+
+# ─── API de ESPHome (opcional, para Home Assistant) ──────────────────────────
+api:
+  encryption:
+    key: ""  # Dejar vacío si no usas Home Assistant
+
+# ─── OTA (actualizaciones por WiFi) ──────────────────────────────────────────
+ota:
+  - platform: esphome
+    password: "ota_password_123"  # <-- Cambia si quieres más seguridad
+
+# ─── MQTT ────────────────────────────────────────────────────────────────────
+mqtt:
+  broker: "192.168.1.100"  # <-- Cambia por la IP de tu PC con Docker
+  port: 1883
+  # Sin usuario ni contraseña (Mosquitto en modo anónimo)
+  topic_prefix: sensor     # Los sensores publicarán bajo sensor/...
+  birth_message:
+    topic: sensor/gas/status
+    payload: "online"
+  will_message:
+    topic: sensor/gas/status
+    payload: "offline"
+
+# ─── SENSORES ────────────────────────────────────────────────────────────────
+sensor:
+  # Sensor principal: MQ-135 en pin A0
+  - platform: adc
+    pin: A0
+    name: "Gas MQ-135"
+    id: gas_raw
+    unit_of_measurement: "raw"
+    icon: "mdi:gas-cylinder"
+    accuracy_decimals: 0
+    update_interval: 10s
+    # Escala 0-1023 → el ESP8266 devuelve 0.0–1.0, multiplicamos por 1023
+    filters:
+      - multiply: 1023
+    on_value:
+      then:
+        - mqtt.publish:
+            topic: sensor/gas
+            payload: !lambda |-
+              char buf[16];
+              snprintf(buf, sizeof(buf), "%.0f", x);
+              return std::string(buf);
+
+  # Sensor de debug: señal WiFi
+  - platform: wifi_signal
+    name: "WiFi RSSI"
+    update_interval: 60s
+
+  # Sensor de debug: tiempo encendido
+  - platform: uptime
+    name: "Uptime"
+    update_interval: 60s
+
+# ─── INFO de red (visible en logs) ───────────────────────────────────────────
+text_sensor:
+  - platform: wifi_info
+    ip_address:
+      name: "IP del dispositivo"
+    ssid:
+      name: "SSID conectado"
