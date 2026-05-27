@@ -2,37 +2,39 @@
   {
     "id": "tab-ming-demo",
     "type": "tab",
-    "label": "MING Demo — Sensor Simulado",
+    "label": "MING — Sensor Gas MQ-135",
     "disabled": false
   },
+
   {
     "id": "inject-sensor",
     "type": "inject",
     "z": "tab-ming-demo",
-    "name": "Simular sensor (cada 5s)",
-    "props": [{"p": "payload"}],
+    "name": "Trigger cada 5s",
+    "props": [{ "p": "payload" }],
     "repeat": "5",
     "crontab": "",
     "once": true,
     "onceDelay": 0.1,
-    "topic": "",
     "payload": "",
     "payloadType": "date",
-    "x": 160,
+    "x": 140,
     "y": 120,
     "wires": [["fn-generar-valor"]]
   },
+
   {
     "id": "fn-generar-valor",
     "type": "function",
     "z": "tab-ming-demo",
-    "name": "Generar valor de gas aleatorio",
-    "func": "// Simula un sensor MQ-135: valor entre 300 y 700\nvar base = 450;\nvar ruido = Math.floor(Math.random() * 400) - 200;\nmsg.payload = String(base + ruido);\nreturn msg;",
+    "name": "Simular MQ-135",
+    "func": "// Rango real ADC MQ-135: 0–1023\n// Zona normal de CO2/VOC en ambiente interior: 300–700\nvar base = 450;\nvar ruido = Math.floor(Math.random() * 400) - 200;\nvar valor = Math.max(0, Math.min(1023, base + ruido));\nmsg.payload = String(valor);\nreturn msg;",
     "outputs": 1,
-    "x": 410,
+    "x": 340,
     "y": 120,
-    "wires": [["mqtt-out-sensor", "debug-valor"]]
+    "wires": [["mqtt-out-sensor"]]
   },
+
   {
     "id": "mqtt-out-sensor",
     "type": "mqtt out",
@@ -41,27 +43,12 @@
     "topic": "sensor/gas",
     "qos": "0",
     "retain": false,
-    "respTopic": "",
-    "contentType": "",
-    "userProps": "",
     "broker": "broker-local",
-    "x": 680,
-    "y": 80,
+    "x": 580,
+    "y": 120,
     "wires": []
   },
-  {
-    "id": "debug-valor",
-    "type": "debug",
-    "z": "tab-ming-demo",
-    "name": "Ver valor generado",
-    "active": true,
-    "tosidebar": true,
-    "console": false,
-    "complete": "payload",
-    "x": 680,
-    "y": 160,
-    "wires": []
-  },
+
   {
     "id": "mqtt-in-sensor",
     "type": "mqtt in",
@@ -71,49 +58,72 @@
     "qos": "0",
     "datatype": "auto",
     "broker": "broker-local",
-    "x": 160,
+    "x": 140,
+    "y": 300,
+    "wires": [["switch-validar"]]
+  },
+
+  {
+    "id": "switch-validar",
+    "type": "switch",
+    "z": "tab-ming-demo",
+    "name": "Validar rango 0–1023",
+    "property": "payload",
+    "propertyType": "msg",
+    "rules": [
+      { "t": "gte", "v": "0",    "vt": "num" },
+      { "t": "lte", "v": "1023", "vt": "num" }
+    ],
+    "checkall": "true",
+    "repair": false,
+    "outputs": 1,
+    "x": 360,
     "y": 300,
     "wires": [["fn-preparar-influx"]]
   },
+
   {
     "id": "fn-preparar-influx",
     "type": "function",
     "z": "tab-ming-demo",
-    "name": "Preparar para InfluxDB",
-    "func": "var valor = parseFloat(msg.payload);\nif (isNaN(valor)) return null;\nmsg.payload = [{\n  measurement: \"gas_level\",\n  fields: { value: valor },\n  tags: { sensor: \"simulado\", device: \"nodered\" }\n}];\nreturn msg;",
+    "name": "Preparar payload InfluxDB",
+    "func": "var valor = parseFloat(msg.payload);\nif (isNaN(valor)) return null;\nmsg.payload = [{\n  measurement: \"gas_level\",\n  fields: { value: valor },\n  tags: { sensor: \"mq135\", device: \"simulador\" }\n}];\nreturn msg;",
     "outputs": 1,
-    "x": 400,
+    "x": 600,
     "y": 300,
-    "wires": [["influx-out", "debug-influx"]]
+    "wires": [["influx-out", "debug-pipeline"]]
   },
+
   {
     "id": "influx-out",
     "type": "influxdb out",
     "z": "tab-ming-demo",
     "influxdb": "influx-server",
-    "name": "Escribir en InfluxDB",
+    "name": "Escribir → gas_data",
     "measurement": "gas_level",
     "precision": "",
     "retentionPolicy": "",
     "org": "myorg",
     "bucket": "gas_data",
-    "x": 660,
+    "x": 840,
     "y": 260,
     "wires": []
   },
+
   {
-    "id": "debug-influx",
+    "id": "debug-pipeline",
     "type": "debug",
     "z": "tab-ming-demo",
-    "name": "Ver dato enviado a InfluxDB",
+    "name": "Debug escritura",
     "active": true,
     "tosidebar": true,
     "console": false,
     "complete": "payload",
-    "x": 690,
+    "x": 840,
     "y": 340,
     "wires": []
   },
+
   {
     "id": "broker-local",
     "type": "mqtt-broker",
@@ -127,6 +137,7 @@
     "keepalive": "60",
     "cleansession": true
   },
+
   {
     "id": "influx-server",
     "type": "influxdb",
