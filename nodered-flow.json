@@ -7,6 +7,17 @@
   },
 
   {
+    "id": "comment-setup",
+    "type": "comment",
+    "z": "tab-ming-demo",
+    "name": "⚙️ SETUP — Leer antes de hacer Deploy",
+    "info": "## Primer uso — pasos obligatorios\n\n### 1. Limpiar credenciales anteriores de Node-RED\nSi ya hubo un deploy anterior en este contenedor, las credenciales\nencriptadas pueden estar corruptas. Ejecute este comando ANTES de\nhacer Deploy:\n\n```\ndocker exec ming_nodered rm -f /data/flows_cred.json\ndocker restart ming_nodered\n```\n\nEspere ~10 segundos a que Node-RED vuelva a subir.\n\n### 2. Configurar el token de InfluxDB\nDespués del reinicio, abra este flujo y siga estos pasos:\n1. Menú ≡ → Configuration nodes → **InfluxDB Local** → doble clic\n2. Campo **Token** → escriba: `ming-token`\n3. **Update → Done → Deploy**\n\n### 3. Verificar que el bucket existe\nSi InfluxDB es nuevo o fue reseteado:\n```\ndocker exec -it ming_influxdb influx bucket create --name gas_data --org myorg --token ming-token --retention 0\n```\n\n### 4. Verificar nombres de contenedores\n```\ndocker ps --format \"table {{.Names}}\\t{{.Status}}\"\n```\nDeben aparecer: `ming_influxdb`, `ming_mosquitto`, `ming_nodered`, `ming_grafana`",
+    "x": 180,
+    "y": 40,
+    "wires": []
+  },
+
+  {
     "id": "inject-sensor",
     "type": "inject",
     "z": "tab-ming-demo",
@@ -19,7 +30,7 @@
     "payload": "",
     "payloadType": "date",
     "x": 140,
-    "y": 120,
+    "y": 140,
     "wires": [["fn-generar-valor"]]
   },
 
@@ -28,10 +39,10 @@
     "type": "function",
     "z": "tab-ming-demo",
     "name": "Simular MQ-135",
-    "func": "// Rango real ADC MQ-135: 0–1023\n// Zona normal de CO2/VOC en ambiente interior: 300–700\nvar base = 450;\nvar ruido = Math.floor(Math.random() * 400) - 200;\nvar valor = Math.max(0, Math.min(1023, base + ruido));\nmsg.payload = String(valor);\nreturn msg;",
+    "func": "// Rango real ADC MQ-135: 0–1023\n// Zona normal CO2/VOC interior: 300–700\nvar base = 450;\nvar ruido = Math.floor(Math.random() * 400) - 200;\nvar valor = Math.max(0, Math.min(1023, base + ruido));\nmsg.payload = String(valor);\nreturn msg;",
     "outputs": 1,
-    "x": 340,
-    "y": 120,
+    "x": 330,
+    "y": 140,
     "wires": [["mqtt-out-sensor"]]
   },
 
@@ -44,8 +55,8 @@
     "qos": "0",
     "retain": false,
     "broker": "broker-local",
-    "x": 580,
-    "y": 120,
+    "x": 560,
+    "y": 140,
     "wires": []
   },
 
@@ -77,7 +88,7 @@
     "checkall": "true",
     "repair": false,
     "outputs": 1,
-    "x": 360,
+    "x": 350,
     "y": 300,
     "wires": [["fn-preparar-influx"]]
   },
@@ -87,11 +98,25 @@
     "type": "function",
     "z": "tab-ming-demo",
     "name": "Preparar payload InfluxDB",
-    "func": "var valor = parseFloat(msg.payload);\nif (isNaN(valor)) return null;\nmsg.payload = [{\n  measurement: \"gas_level\",\n  fields: { value: valor },\n  tags: { sensor: \"mq135\", device: \"simulador\" }\n}];\nreturn msg;",
+    "func": "var valor = parseFloat(msg.payload);\nif (isNaN(valor)) {\n    node.warn('Payload no numérico: ' + msg.payload);\n    return null;\n}\nmsg.payload = { value: valor };\nreturn msg;",
     "outputs": 1,
-    "x": 600,
+    "x": 580,
     "y": 300,
-    "wires": [["influx-out", "debug-pipeline"]]
+    "wires": [["debug-pre-influx", "influx-out"]]
+  },
+
+  {
+    "id": "debug-pre-influx",
+    "type": "debug",
+    "z": "tab-ming-demo",
+    "name": "✅ Payload → InfluxDB",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "complete": "payload",
+    "x": 820,
+    "y": 260,
+    "wires": []
   },
 
   {
@@ -101,26 +126,50 @@
     "influxdb": "influx-server",
     "name": "Escribir → gas_data",
     "measurement": "gas_level",
-    "precision": "",
+    "precision": "ms",
     "retentionPolicy": "",
     "org": "myorg",
     "bucket": "gas_data",
-    "x": 840,
-    "y": 260,
+    "x": 820,
+    "y": 340,
     "wires": []
   },
 
   {
-    "id": "debug-pipeline",
+    "id": "catch-influx-error",
+    "type": "catch",
+    "z": "tab-ming-demo",
+    "name": "Capturar errores InfluxDB",
+    "scope": ["influx-out"],
+    "uncaught": false,
+    "x": 180,
+    "y": 460,
+    "wires": [["fn-formatear-error"]]
+  },
+
+  {
+    "id": "fn-formatear-error",
+    "type": "function",
+    "z": "tab-ming-demo",
+    "name": "Formatear error",
+    "func": "var err = msg.error || {};\nvar texto = '❌ ERROR InfluxDB\\n';\ntexto += 'Mensaje : ' + (err.message || 'desconocido') + '\\n';\ntexto += 'Nodo    : ' + (err.source ? err.source.name : 'N/A');\n\nif ((err.message || '').toLowerCase().includes('bucket')) {\n    texto += '\\n💡 Bucket no encontrado. Ejecute:\\n'\n           + 'docker exec -it ming_influxdb influx bucket create --name gas_data --org myorg --token ming-token --retention 0';\n} else if ((err.message || '').match(/unauthorized|401/i)) {\n    texto += '\\n💡 Token inválido. Verifique en Configuration nodes → InfluxDB Local → Token: ming-token';\n} else if ((err.message || '').match(/ECONNREFUSED|ENOTFOUND/i)) {\n    texto += '\\n💡 Contenedor no alcanzable. Verifique:\\n'\n           + 'docker ps | grep influxdb';\n} else if ((err.message || '').match(/credential|secret|encrypt/i)) {\n    texto += '\\n💡 Credenciales corruptas. Ejecute:\\n'\n           + 'docker exec ming_nodered rm -f /data/flows_cred.json\\n'\n           + 'docker restart ming_nodered\\n'\n           + 'Luego configure el token en Configuration nodes → InfluxDB Local';\n}\n\nmsg.payload = texto;\nreturn msg;",
+    "outputs": 1,
+    "x": 420,
+    "y": 460,
+    "wires": [["debug-error"]]
+  },
+
+  {
+    "id": "debug-error",
     "type": "debug",
     "z": "tab-ming-demo",
-    "name": "Debug escritura",
+    "name": "❌ Error InfluxDB",
     "active": true,
     "tosidebar": true,
     "console": false,
     "complete": "payload",
-    "x": 840,
-    "y": 340,
+    "x": 650,
+    "y": 460,
     "wires": []
   },
 
