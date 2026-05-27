@@ -119,15 +119,7 @@ El archivo `gas-sensor.yaml` contiene la configuración para un sensor MQ-135 re
 
 ## Guía de capacitación
 
-La guía completa del stack está disponible en `index.html`. Ábrala directamente en el navegador o despliéguela con:
+La guía completa del stack está disponible en `index.html`. Ábrala directamente en el navegador o  con https://roserocarlos.github.io/Ming/ :
 
-```bash
-# Con Python
-python3 -m http.server 8080
-
-# O con cualquier servidor estático
-```
-
----
 
 *Stack MING — desarrollado para monitoreo agrícola IoT en campo.*
