@@ -3,47 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Stack MING + ESPHome — Guía de despliegue</title>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<title>Stack MING — Guía de despliegue</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0d1117;
-    --bg2: #161b22;
-    --bg3: #21262d;
-    --border: #30363d;
-    --text: #e6edf3;
-    --muted: #8b949e;
-    --accent: #58a6ff;
-    --green: #3fb950;
-    --yellow: #d29922;
-    --orange: #f0883e;
-    --red: #f85149;
-    --purple: #bc8cff;
-    --cyan: #79c0ff;
-    --pink: #ff7b72;
-
-    /* PowerShell colors */
-    --ps-bg: #012456;
-    --ps-bg2: #001d47;
-    --ps-prompt: #ffff00;
-    --ps-cmd: #ffffff;
-    --ps-flag: #00bfff;
-    --ps-string: #ce9178;
-    --ps-comment: #6a9955;
-    --ps-output: #cccccc;
-
-    /* YAML colors */
-    --yaml-key: #79c0ff;
-    --yaml-val: #a5d6ff;
-    --yaml-string: #a8d8a8;
-    --yaml-comment: #6a9955;
-    --yaml-anchor: #f0883e;
-
-    /* Flux colors */
-    --flux-fn: #d2a8ff;
-    --flux-pipe: #f0883e;
-    --flux-string: #a8d8a8;
-    --flux-key: #79c0ff;
+    --bg:      #0a0e17;
+    --bg2:     #111827;
+    --bg3:     #1c2333;
+    --border:  #2a3547;
+    --text:    #e2e8f0;
+    --muted:   #64748b;
+    --accent:  #38bdf8;
+    --green:   #34d399;
+    --yellow:  #fbbf24;
+    --red:     #f87171;
+    --orange:  #fb923c;
+    --purple:  #a78bfa;
+    --mono:    'IBM Plex Mono', monospace;
+    --sans:    'IBM Plex Sans', sans-serif;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -51,1233 +28,682 @@
   body {
     background: var(--bg);
     color: var(--text);
-    font-family: 'Syne', sans-serif;
+    font-family: var(--sans);
     font-size: 15px;
     line-height: 1.7;
   }
 
-  /* ── HEADER ─────────────────────────────── */
+  /* HEADER */
   header {
-    background: linear-gradient(135deg, #0d1117 0%, #1a2744 50%, #0d1117 100%);
+    background: var(--bg2);
     border-bottom: 1px solid var(--border);
-    padding: 3rem 2rem 2rem;
+    padding: 2.5rem 2rem 2rem;
     text-align: center;
-    position: relative;
-    overflow: hidden;
   }
-  header::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(88,166,255,0.12), transparent);
-    pointer-events: none;
-  }
-  header h1 {
-    font-size: clamp(1.6rem, 4vw, 2.4rem);
-    font-weight: 800;
-    letter-spacing: -0.02em;
+  .logo {
+    font-family: var(--mono);
+    font-size: 2.4rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
     color: #fff;
-    margin-bottom: 0.5rem;
   }
-  header h1 span { color: var(--accent); }
-  .badges {
-    display: flex; flex-wrap: wrap; gap: 0.5rem;
-    justify-content: center; margin-top: 1rem;
+  .logo span { color: var(--accent); }
+  .subtitle {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-top: 0.3rem;
   }
-  .badge {
+  .repo-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 1rem;
     background: var(--bg3);
     border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 3px 12px;
-    font-family: 'JetBrains Mono', monospace;
+    border-radius: 6px;
+    padding: 6px 14px;
+    font-family: var(--mono);
     font-size: 12px;
+    color: var(--accent);
+    text-decoration: none;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .repo-link:hover { border-color: var(--accent); background: #0f1f30; }
+  .stack-badges {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+  }
+  .badge {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
     color: var(--muted);
   }
-  .badge.green { color: var(--green); border-color: var(--green); }
-  .badge.blue  { color: var(--accent); border-color: var(--accent); }
 
-  /* ── LAYOUT ─────────────────────────────── */
-  .container { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+  /* LAYOUT */
+  .container { max-width: 860px; margin: 0 auto; padding: 2rem 1.5rem 5rem; }
 
-  /* ── STEP CARDS ─────────────────────────── */
+  /* PROGRESS */
+  .progress {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .progress-track {
+    flex: 1;
+    height: 4px;
+    background: var(--bg3);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--green));
+    border-radius: 2px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+  .progress-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  /* STEP CARD */
   .step {
     background: var(--bg2);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    margin-bottom: 2rem;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
     overflow: hidden;
+    transition: border-color 0.2s;
   }
+  .step.done { border-color: #1a3d2e; }
   .step-header {
-    display: flex; align-items: center; gap: 1rem;
-    padding: 1.2rem 1.5rem;
-    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.1rem 1.4rem;
     cursor: pointer;
     user-select: none;
     transition: background 0.15s;
   }
   .step-header:hover { background: var(--bg3); }
   .step-num {
-    width: 36px; height: 36px;
-    background: var(--accent);
-    color: #000;
-    border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'JetBrains Mono', monospace;
+    width: 32px;
+    height: 32px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono);
     font-weight: 700;
-    font-size: 14px;
+    font-size: 13px;
+    color: var(--accent);
     flex-shrink: 0;
+    transition: all 0.2s;
   }
-  .step-num.done { background: var(--green); }
-  .step-title { font-size: 1.1rem; font-weight: 700; flex: 1; }
-  .step-toggle { color: var(--muted); font-size: 1.2rem; transition: transform 0.2s; }
-  .step-toggle.open { transform: rotate(180deg); }
-  .step-body { padding: 1.5rem; display: none; }
+  .step.done .step-num { background: #0d2e1e; border-color: var(--green); color: var(--green); }
+  .step-title { font-size: 1rem; font-weight: 600; flex: 1; }
+  .step-arrow { color: var(--muted); font-size: 0.8rem; transition: transform 0.2s; }
+  .step-arrow.open { transform: rotate(180deg); }
+  .step-body { padding: 0 1.4rem 1.4rem; display: none; }
   .step-body.open { display: block; }
 
-  /* ── SUBSECTIONS ─────────────────────────── */
-  .sub { margin-bottom: 1.5rem; }
-  .sub h3 {
-    font-size: 0.85rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--muted);
-    margin-bottom: 0.75rem;
-    padding-bottom: 0.4rem;
-    border-bottom: 1px solid var(--border);
-  }
-  p { margin-bottom: 0.75rem; color: #c9d1d9; }
-  strong { color: var(--text); }
-  a { color: var(--accent); }
-
-  /* ── CALLOUTS ────────────────────────────── */
+  /* CALLOUTS */
   .callout {
-    border-radius: 8px;
-    padding: 0.9rem 1.2rem;
-    margin: 1rem 0;
     border-left: 3px solid;
-    font-size: 0.92rem;
-  }
-  .callout.warn  { background: rgba(210,153,34,0.1);  border-color: var(--yellow); color: #e3bf6e; }
-  .callout.info  { background: rgba(88,166,255,0.08); border-color: var(--accent); color: #92c5fd; }
-  .callout.tip   { background: rgba(63,185,80,0.08);  border-color: var(--green);  color: #7ee787; }
-  .callout.error { background: rgba(248,81,73,0.08);  border-color: var(--red);    color: #ffa198; }
-  .callout-icon { font-size: 1.1em; margin-right: 0.4rem; }
-
-  /* ── POWERSHELL BLOCK ────────────────────── */
-  .ps-window {
-    border-radius: 10px;
-    overflow: hidden;
-    margin: 1rem 0;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-    border: 1px solid #1e3a5f;
-  }
-  .ps-titlebar {
-    background: #002b5c;
-    padding: 7px 14px;
-    display: flex; align-items: center; gap: 8px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    color: #8ab4d8;
-    border-bottom: 1px solid #1e3a5f;
-  }
-  .ps-titlebar::before {
-    content: '▶ ';
-    color: var(--ps-prompt);
-    font-size: 10px;
-  }
-  .ps-body {
-    background: var(--ps-bg);
-    padding: 1rem 1.2rem;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
-    line-height: 1.8;
-    overflow-x: auto;
-  }
-  .ps-line { display: flex; align-items: flex-start; gap: 0; margin: 1px 0; }
-  .ps-prompt-txt { color: var(--ps-prompt); flex-shrink: 0; margin-right: 4px; }
-  .ps-cmd-txt { color: var(--ps-cmd); }
-  .ps-flag-txt { color: var(--ps-flag); }
-  .ps-str-txt  { color: var(--ps-string); }
-  .ps-comment-txt { color: var(--ps-comment); font-style: italic; display: block; margin-top: 2px; }
-  .ps-output-txt { color: var(--ps-output); padding-left: 0; display: block; opacity: 0.85; }
-  .ps-copy {
-    float: right;
-    background: #1e3a5f;
-    border: none;
-    color: #8ab4d8;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    padding: 2px 8px;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-left: 1rem;
-    transition: background 0.15s, color 0.15s;
-  }
-  .ps-copy:hover { background: var(--accent); color: #000; }
-
-  /* ── YAML BLOCK ──────────────────────────── */
-  .yaml-block {
-    background: #0f1f0f;
-    border: 1px solid #2a3f2a;
-    border-radius: 8px;
-    padding: 1rem 1.2rem;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
-    line-height: 1.8;
-    overflow-x: auto;
-    margin: 1rem 0;
-    position: relative;
-  }
-  .yaml-block .label {
-    position: absolute; top: 6px; right: 10px;
-    font-size: 10px; color: #3a6a3a; text-transform: uppercase; letter-spacing: 0.1em;
-  }
-  .yk { color: var(--yaml-key); }
-  .yv { color: var(--yaml-val); }
-  .ys { color: var(--yaml-string); }
-  .yc { color: var(--yaml-comment); font-style: italic; }
-  .ya { color: var(--yaml-anchor); font-weight: 700; }
-
-  /* ── FLUX BLOCK ──────────────────────────── */
-  .flux-block {
-    background: #120f1f;
-    border: 1px solid #2d2a4a;
-    border-radius: 8px;
-    padding: 1rem 1.2rem;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
-    line-height: 1.8;
-    overflow-x: auto;
-    margin: 1rem 0;
-    position: relative;
-  }
-  .flux-block .label {
-    position: absolute; top: 6px; right: 10px;
-    font-size: 10px; color: #4a3a6a; text-transform: uppercase; letter-spacing: 0.1em;
-  }
-  .ff { color: var(--flux-fn); }
-  .fp { color: var(--flux-pipe); font-weight: 700; }
-  .fs { color: var(--flux-string); }
-  .fk { color: var(--flux-key); }
-
-  /* ── TABLE ───────────────────────────────── */
-  table {
-    width: 100%;
-    border-collapse: collapse;
+    border-radius: 0 6px 6px 0;
+    padding: 0.8rem 1rem;
     margin: 1rem 0;
     font-size: 0.9rem;
   }
-  th {
-    background: var(--bg3);
-    color: var(--muted);
-    font-weight: 600;
-    text-align: left;
-    padding: 8px 12px;
-    font-size: 11px;
+  .callout.warn  { background: rgba(251,191,36,0.07);  border-color: var(--yellow); color: #e5ba5a; }
+  .callout.info  { background: rgba(56,189,248,0.07);  border-color: var(--accent); color: #7ed4f7; }
+  .callout.ok    { background: rgba(52,211,153,0.07);  border-color: var(--green);  color: #6edcb4; }
+  .callout.error { background: rgba(248,113,113,0.07); border-color: var(--red);    color: #faa0a0; }
+
+  /* SECTION LABEL */
+  .section-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin: 1.5rem 0 0.6rem;
+    padding-bottom: 0.4rem;
     border-bottom: 1px solid var(--border);
-  }
-  td {
-    padding: 8px 12px;
-    border-bottom: 1px solid var(--border);
-    color: #c9d1d9;
-  }
-  tr:last-child td { border-bottom: none; }
-  tr:hover td { background: rgba(255,255,255,0.02); }
-  code {
-    font-family: 'JetBrains Mono', monospace;
-    background: var(--bg3);
-    padding: 1px 6px;
-    border-radius: 4px;
-    font-size: 0.88em;
-    color: var(--orange);
   }
 
-  /* ── FLOW DIAGRAM ────────────────────────── */
+  /* CODE BLOCK */
+  .code-block {
+    background: #050810;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 0.8rem 0;
+    font-family: var(--mono);
+    font-size: 12.5px;
+  }
+  .code-header {
+    background: var(--bg3);
+    padding: 6px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+  .code-lang {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+  .copy-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .code-body {
+    padding: 1rem 1.2rem;
+    line-height: 1.9;
+    overflow-x: auto;
+    white-space: pre;
+  }
+  .cm { color: #4a5568; font-style: italic; } /* comment */
+  .ck { color: var(--accent); }               /* keyword / key */
+  .cs { color: var(--green); }                /* string */
+  .cv { color: var(--orange); }               /* value */
+  .cf { color: var(--yellow); }               /* flag */
+  .co { color: #94a3b8; }                     /* output */
+
+  /* TABLE */
+  table { width: 100%; border-collapse: collapse; margin: 0.8rem 0; font-size: 0.88rem; }
+  th { background: var(--bg3); color: var(--muted); font-weight: 600; text-align: left; padding: 7px 12px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; border-bottom: 1px solid var(--border); font-family: var(--mono); }
+  td { padding: 8px 12px; border-bottom: 1px solid var(--border); color: #94a3b8; }
+  tr:last-child td { border-bottom: none; }
+  td:first-child { color: var(--text); }
+  code { font-family: var(--mono); background: var(--bg3); padding: 1px 5px; border-radius: 3px; font-size: 0.85em; color: var(--orange); }
+
+  /* STEP LIST */
+  .steps-list { counter-reset: sl; padding: 0; list-style: none; }
+  .steps-list li {
+    counter-increment: sl;
+    display: flex;
+    gap: 0.8rem;
+    margin-bottom: 0.9rem;
+    align-items: flex-start;
+  }
+  .steps-list li::before {
+    content: counter(sl);
+    width: 22px;
+    height: 22px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .steps-list li p { color: #94a3b8; margin: 0; }
+  .steps-list li strong { color: var(--text); }
+
+  /* DONE BUTTON */
+  .done-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 1.2rem;
+    background: transparent;
+    border: 1px solid var(--green);
+    color: var(--green);
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .done-btn:hover, .done-btn.done { background: var(--green); color: #000; }
+
+  /* FLOW DIAGRAM */
   .flow {
     background: var(--bg3);
     border: 1px solid var(--border);
     border-radius: 8px;
-    padding: 1.5rem;
-    font-family: 'JetBrains Mono', monospace;
+    padding: 1.2rem 1.5rem;
+    font-family: var(--mono);
     font-size: 12px;
-    line-height: 2;
+    line-height: 2.2;
     color: var(--muted);
+    margin: 0.8rem 0;
   }
-  .flow .node { color: var(--green); font-weight: 700; }
-  .flow .arrow { color: var(--accent); }
-  .flow .label { color: var(--yellow); }
+  .fn { color: var(--green); font-weight: 700; }
+  .fa { color: var(--accent); }
+  .fl { color: var(--yellow); }
 
-  /* ── OL LIST ─────────────────────────────── */
-  ol { padding-left: 1.4rem; }
-  ol li { margin-bottom: 0.4rem; color: #c9d1d9; }
-  ol li strong { color: var(--text); }
-
-  /* ── STEP COMPLETE BUTTON ────────────────── */
-  .mark-done {
-    display: inline-flex; align-items: center; gap: 6px;
-    margin-top: 1rem;
-    background: transparent;
-    border: 1px solid var(--green);
-    color: var(--green);
-    padding: 6px 16px;
-    border-radius: 6px;
-    font-family: 'Syne', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .mark-done:hover { background: var(--green); color: #000; }
-  .mark-done.done { background: var(--green); color: #000; }
-
-  /* ── PROGRESS ────────────────────────────── */
-  .progress-bar {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 1rem 1.5rem;
-    margin-bottom: 2rem;
-    display: flex; align-items: center; gap: 1rem;
-  }
-  .progress-track {
-    flex: 1;
-    height: 6px;
-    background: var(--bg3);
-    border-radius: 3px;
-    overflow: hidden;
-  }
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--accent), var(--green));
-    border-radius: 3px;
-    transition: width 0.4s ease;
-    width: 0%;
-  }
-  .progress-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
-    color: var(--muted);
-    white-space: nowrap;
-  }
-
-  /* ── ESPHOME DASHBOARD GUIDE ─────────────── */
-  .visual-steps {
-    counter-reset: vstep;
-  }
-  .vstep {
-    display: flex; gap: 1rem; margin-bottom: 1.2rem; align-items: flex-start;
-  }
-  .vstep-num {
-    counter-increment: vstep;
-    width: 28px; height: 28px;
-    background: var(--purple);
-    color: #000;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 700; font-size: 13px;
-    flex-shrink: 0;
-    margin-top: 2px;
-  }
-  .vstep-content { flex: 1; }
-  .vstep-content p { margin-bottom: 0.3rem; }
-  .screen-hint {
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 0.5rem 0.9rem;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
-    color: var(--purple);
-    margin-top: 0.4rem;
-    display: inline-block;
-  }
-
-  /* ── METHOD TABS ─────────────────────────── */
-  .method-tabs {
-    display: flex; gap: 0.5rem; margin: 1rem 0 0;
-  }
-  .mtab {
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    color: var(--muted);
-    padding: 7px 16px;
-    border-radius: 8px 8px 0 0;
-    font-family: 'Syne', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.15s;
-    border-bottom: 2px solid transparent;
-  }
-  .mtab:hover { color: var(--text); background: var(--bg2); }
-  .mtab.active {
-    background: var(--bg2);
-    border-color: var(--accent);
-    border-bottom-color: var(--bg2);
-    color: var(--accent);
-  }
-  .method-panel {
-    border: 1px solid var(--border);
-    border-radius: 0 8px 8px 8px;
-    padding: 1.2rem;
-    background: var(--bg2);
-    margin-bottom: 1rem;
-  }
-  .method-panel.hidden { display: none; }
-
-  /* ── DOCKER DESKTOP MOCKUP ───────────────── */
-  .dd-mockup {
-    border: 1px solid #2d3748;
-    border-radius: 10px;
-    overflow: hidden;
-    background: #1a202c;
-    margin: 0.8rem 0 0.4rem;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-  }
-  .dd-topbar {
-    background: #0f1623;
-    padding: 8px 14px;
-    display: flex; align-items: center; justify-content: space-between;
-    border-bottom: 1px solid #2d3748;
-    font-size: 12px;
-  }
-  .dd-logo { color: #63b3ed; font-weight: 700; }
-  .dd-body-wrap { display: flex; }
-  .dd-sidebar {
-    width: 100px;
-    background: #151d2b;
-    border-right: 1px solid #2d3748;
-    padding: 0.5rem 0;
-    display: flex; flex-direction: column;
-    flex-shrink: 0;
-  }
-  .dd-nav {
-    padding: 6px 10px;
-    color: #718096;
-    font-size: 11px;
-    cursor: default;
-    border-left: 2px solid transparent;
-  }
-  .dd-nav.active { color: #63b3ed; background: #1a2744; border-color: #63b3ed; }
-  .dd-main { flex: 1; padding: 0.75rem; }
-  .dd-group {
-    border: 1px solid #2d3748;
-    border-radius: 6px;
-    overflow: hidden;
-  }
-  .dd-group-header {
-    background: #1e2d45;
-    padding: 7px 10px;
-    display: flex; align-items: center; gap: 8px;
-    border-bottom: 1px solid #2d3748;
-    color: #e2e8f0;
-    font-size: 11px;
-  }
-  .dd-count { color: #718096; flex: 1; }
-  .dd-btns { display: flex; gap: 4px; }
-  .dd-btn { 
-    background: #2d3748; border-radius: 3px; padding: 1px 5px;
-    color: #a0aec0; font-size: 10px; cursor: default;
-  }
-  .dd-btn.stop { color: #fc8181; }
-  .dd-btn.restart { color: #63b3ed; }
-  .dd-container-row {
-    display: flex; align-items: center; gap: 8px;
-    padding: 5px 10px;
-    border-bottom: 1px solid #1e2836;
-    color: #a0aec0; font-size: 11px;
-  }
-  .dd-container-row:last-child { border-bottom: none; }
-  .dd-cname { flex: 1; color: #e2e8f0; }
-  .dd-port { color: #4a9eff; }
-  .dd-tag {
-    padding: 1px 7px; border-radius: 3px; font-size: 10px; font-weight: 700;
-  }
-  .dd-tag.green { background: rgba(63,185,80,0.15); color: var(--green); }
-  .dd-status {
-    width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
-  }
-  .dd-status.running { background: var(--green); box-shadow: 0 0 4px var(--green); }
-
-  /* Layout fix for mockup sidebar + main */
-  .dd-mockup { display: flex; flex-direction: column; }
-  .dd-mockup > .dd-topbar { flex-shrink: 0; }
-  .dd-mockup > .dd-sidebar,
-  .dd-mockup > .dd-main { display: block; }
-  .dd-inner { display: flex; }
-  .dd-inner .dd-sidebar { width: 110px; }
+  p { color: #94a3b8; margin-bottom: 0.6rem; }
+  strong { color: var(--text); }
+  a { color: var(--accent); }
 
   @media (max-width: 600px) {
-    .ps-body { font-size: 11px; }
-    .container { padding: 1rem; }
-    .method-tabs { flex-direction: column; }
-    .mtab { border-radius: 6px; border-bottom: 1px solid var(--border); }
-    .method-panel { border-radius: 8px; }
+    .logo { font-size: 1.8rem; }
+    .code-body { font-size: 11px; }
   }
 </style>
 </head>
 <body>
 
 <header>
-  <h1>Stack <span>MING</span> + ESPHome</h1>
-  <p style="color:var(--muted);font-size:0.9rem;margin-top:0.3rem">Guía completa de despliegue — Windows 10/11 con Docker Desktop</p>
-  <div class="badges">
-    <span class="badge green">NodeMCU v2 (ESP-12E)</span>
-    <span class="badge">Sensor MQ-135</span>
-    <span class="badge blue">Mosquitto · InfluxDB · Node-RED · Grafana</span>
-    <span class="badge">Sin autenticación MQTT</span>
+  <div class="logo">Stack <span>MING</span></div>
+  <div class="subtitle">Mosquitto · InfluxDB · Node-RED · Grafana — Monitor de Sensor de Gas MQ-135</div>
+  <a class="repo-link" href="https://github.com/roserocarlos/Ming" target="_blank">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+    github.com/roserocarlos/Ming
+  </a>
+  <div class="stack-badges">
+    <span class="badge">Docker Desktop</span>
+    <span class="badge">Windows 10/11</span>
+    <span class="badge">Sensor MQ-135 (simulado)</span>
+    <span class="badge">Puerto 1883 · 1880 · 8086 · 3000</span>
   </div>
 </header>
 
 <div class="container">
 
   <!-- PROGRESS -->
-  <div class="progress-bar">
-    <span style="font-size:0.85rem;color:var(--muted);white-space:nowrap;">Progreso</span>
+  <div class="progress">
+    <span style="font-size:0.8rem;color:var(--muted)">Progreso</span>
     <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
     <span class="progress-label" id="progressLabel">0 / 5 pasos</span>
   </div>
 
-  <!-- ════════════════════════════════════════
-       PASO 1 — DOCKER
-  ══════════════════════════════════════════ -->
-  <div class="step" id="step1">
-    <div class="step-header" onclick="toggleStep('step1')">
-      <div class="step-num" id="num1">1</div>
-      <div class="step-title">Levantar el stack Docker</div>
-      <span class="step-toggle" id="tog1">▾</span>
-    </div>
-    <div class="step-body open" id="body1">
-
-      <div class="sub">
-        <h3>1.1 — Requisitos previos</h3>
-        <p>Antes de empezar necesitas tener instalado <strong>Docker Desktop para Windows</strong>. Si no lo tienes:</p>
-        <ol>
-          <li>Descárgalo de <a href="https://www.docker.com/products/docker-desktop/" target="_blank">docker.com/products/docker-desktop</a></li>
-          <li>Instálalo con todas las opciones por defecto.</li>
-          <li>Ábrelo y espera a que el ícono de la ballena en la barra de tareas quede quieto (sin animación).</li>
-        </ol>
-        <div class="callout info"><span class="callout-icon">ℹ️</span> En Docker Desktop → Settings → Resources asigna mínimo <strong>2 GB de RAM</strong>.</div>
-      </div>
-
-      <div class="sub">
-        <h3>1.2 — Crear las carpetas del proyecto</h3>
-        <p>Abre <strong>PowerShell</strong> (tecla Windows → escribe "PowerShell" → Enter) y ejecuta:</p>
-        <div class="ps-window">
-          <div class="ps-titlebar">Windows PowerShell<button class="ps-copy" onclick="copyPS('cmd-mkdir')">Copiar</button></div>
-          <div class="ps-body" id="cmd-mkdir">
-            <span class="ps-comment-txt"># Crear la estructura de carpetas del proyecto</span>
-            <div class="ps-line"><span class="ps-prompt-txt">PS C:\Users\Tu&gt;&nbsp;</span><span class="ps-cmd-txt">mkdir <span class="ps-str-txt">ming-stack\mosquitto\config</span></span></div>
-            <div class="ps-line"><span class="ps-prompt-txt">PS C:\Users\Tu&gt;&nbsp;</span><span class="ps-cmd-txt">mkdir <span class="ps-str-txt">ming-stack\mosquitto\data</span></span></div>
-            <div class="ps-line"><span class="ps-prompt-txt">PS C:\Users\Tu&gt;&nbsp;</span><span class="ps-cmd-txt">mkdir <span class="ps-str-txt">ming-stack\mosquitto\log</span></span></div>
-          </div>
-        </div>
-        <p>Luego copia todos los archivos entregados dentro de la carpeta <code>ming-stack\</code>. La estructura debe quedar así:</p>
-        <div class="ps-window">
-          <div class="ps-titlebar">Estructura de archivos</div>
-          <div class="ps-body">
-            <span class="ps-output-txt">ming-stack/</span>
-            <span class="ps-output-txt">├── <span style="color:var(--accent)">docker-compose.yml</span></span>
-            <span class="ps-output-txt">├── <span style="color:var(--green)">gas-sensor.yaml</span>          ← ESPHome</span>
-            <span class="ps-output-txt">├── <span style="color:var(--yellow)">nodered-flow.json</span>        ← Flujo Node-RED</span>
-            <span class="ps-output-txt">└── mosquitto/</span>
-            <span class="ps-output-txt">    └── config/</span>
-            <span class="ps-output-txt">        └── <span style="color:var(--orange)">mosquitto.conf</span></span>
-          </div>
-        </div>
-      </div>
-
-      <div class="sub">
-        <h3>1.3 — Levantar los 4 servicios</h3>
-        <p>Elige el método que prefieras — ambos hacen exactamente lo mismo:</p>
-
-        <!-- TAB SWITCHER -->
-        <div class="method-tabs">
-          <button class="mtab active" onclick="switchTab(this,'tab-gui')">🖥️ Docker Desktop (visual)</button>
-          <button class="mtab" onclick="switchTab(this,'tab-ps')">⌨️ PowerShell (terminal)</button>
-        </div>
-
-        <!-- TAB: GUI -->
-        <div class="method-panel" id="tab-gui">
-          <div class="callout tip" style="margin-top:0.8rem">
-            <span class="callout-icon">💡</span> Esta es la forma más fácil para usuarios nuevos — todo con clics, sin escribir comandos.
-          </div>
-          <div class="visual-steps" style="margin-top:1rem">
-
-            <div class="vstep">
-              <div class="vstep-num" style="background:var(--accent)"></div>
-              <div class="vstep-content">
-                <p>Abre <strong>Docker Desktop</strong> desde el escritorio o la barra de tareas (ícono de ballena 🐳).</p>
-                <p>Espera a que el indicador en la esquina inferior izquierda diga <strong style="color:var(--green)">Engine running</strong>.</p>
-              </div>
-            </div>
-
-            <div class="vstep">
-              <div class="vstep-num" style="background:var(--accent)"></div>
-              <div class="vstep-content">
-                <p>En el panel izquierdo haz clic en <strong>Dev Environments</strong> o simplemente en <strong>Containers</strong> — verás que está vacío por ahora.</p>
-              </div>
-            </div>
-
-            <div class="vstep">
-              <div class="vstep-num" style="background:var(--accent)"></div>
-              <div class="vstep-content">
-                <p>Abre el <strong>Explorador de Archivos</strong> de Windows, navega hasta la carpeta <code>ming-stack</code> que creaste antes y verifica que el archivo <code>docker-compose.yml</code> esté ahí.</p>
-              </div>
-            </div>
-
-            <div class="vstep">
-              <div class="vstep-num" style="background:var(--accent)"></div>
-              <div class="vstep-content">
-                <p>Haz clic en la <strong>barra de dirección</strong> del Explorador de Archivos (donde aparece la ruta), escribe <code>cmd</code> y presiona <strong>Enter</strong>.</p>
-                <div class="screen-hint">Se abre una ventana negra (CMD) ya ubicada en la carpeta ming-stack</div>
-              </div>
-            </div>
-
-            <div class="vstep">
-              <div class="vstep-num" style="background:var(--accent)"></div>
-              <div class="vstep-content">
-                <p>En esa ventana negra, escribe el siguiente comando y presiona <strong>Enter</strong>:</p>
-                <div class="ps-window" style="margin-top:0.5rem">
-                  <div class="ps-titlebar">CMD — dentro de la carpeta ming-stack</div>
-                  <div class="ps-body">
-                    <div class="ps-line"><span class="ps-prompt-txt" style="color:#aaa">C:\...\ming-stack&gt;&nbsp;</span><span class="ps-cmd-txt">docker compose up -d</span></div>
-                  </div>
-                </div>
-                <p style="margin-top:0.5rem">Verás que Docker descarga las imágenes. La primera vez puede tomar 3–5 minutos dependiendo de tu internet.</p>
-              </div>
-            </div>
-
-            <div class="vstep">
-              <div class="vstep-num" style="background:var(--accent)"></div>
-              <div class="vstep-content">
-                <p>Vuelve a <strong>Docker Desktop</strong> y haz clic en <strong>Containers</strong> en el menú izquierdo. Verás un grupo llamado <strong>ming-stack</strong> con 4 contenedores adentro:</p>
-                <div class="dd-mockup">
-                  <div class="dd-topbar">
-                    <span class="dd-logo">🐳 Docker Desktop</span>
-                    <span style="color:var(--muted);font-size:11px">Containers</span>
-                  </div>
-                  <div class="dd-inner">
-                    <div class="dd-sidebar">
-                      <div class="dd-nav active">Containers</div>
-                      <div class="dd-nav">Images</div>
-                      <div class="dd-nav">Volumes</div>
-                    </div>
-                    <div class="dd-main">
-                      <div class="dd-group">
-                        <div class="dd-group-header">
-                          <span class="dd-status running"></span>
-                          <strong>ming-stack</strong>
-                          <span class="dd-count">4 / 4 running</span>
-                          <span class="dd-btns">
-                            <span class="dd-btn stop">⏹</span>
-                            <span class="dd-btn restart">↺</span>
-                            <span class="dd-btn del">🗑</span>
-                          </span>
-                        </div>
-                        <div class="dd-container-row">
-                          <span class="dd-status running"></span>
-                          <span class="dd-cname">ming_mosquitto</span>
-                          <span class="dd-port">:1883</span>
-                          <span class="dd-tag green">Running</span>
-                        </div>
-                        <div class="dd-container-row">
-                          <span class="dd-status running"></span>
-                          <span class="dd-cname">ming_influxdb</span>
-                          <span class="dd-port">:8086</span>
-                          <span class="dd-tag green">Running</span>
-                        </div>
-                        <div class="dd-container-row">
-                          <span class="dd-status running"></span>
-                          <span class="dd-cname">ming_nodered</span>
-                          <span class="dd-port">:1880</span>
-                          <span class="dd-tag green">Running</span>
-                        </div>
-                        <div class="dd-container-row">
-                          <span class="dd-status running"></span>
-                          <span class="dd-cname">ming_grafana</span>
-                          <span class="dd-port">:3000</span>
-                          <span class="dd-tag green">Running</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <p style="margin-top:0.7rem">Si todos tienen el punto verde y dice <strong style="color:var(--green)">Running</strong>, ¡el stack está listo!</p>
-              </div>
-            </div>
-
-            <div class="vstep">
-              <div class="vstep-num" style="background:var(--accent)"></div>
-              <div class="vstep-content">
-                <p><strong>Ver logs desde Docker Desktop:</strong> haz clic en cualquier contenedor (por ejemplo <code>ming_nodered</code>) para abrir su panel de logs en tiempo real — sin necesidad de terminal.</p>
-                <div class="callout info" style="margin-top:0.4rem"><span class="callout-icon">ℹ️</span> Los botones <strong>⏹ Stop</strong>, <strong>↺ Restart</strong> y <strong>▶ Start</strong> de cada contenedor están en ese mismo panel.</div>
-              </div>
-            </div>
-
-          </div><!-- /visual-steps -->
-        </div><!-- /tab-gui -->
-
-        <!-- TAB: PowerShell -->
-        <div class="method-panel hidden" id="tab-ps">
-          <div class="ps-window" style="margin-top:0.8rem">
-            <div class="ps-titlebar">Windows PowerShell<button class="ps-copy" onclick="copyPS('cmd-up')">Copiar</button></div>
-            <div class="ps-body" id="cmd-up">
-              <div class="ps-line"><span class="ps-prompt-txt">PS C:\Users\Tu&gt;&nbsp;</span><span class="ps-cmd-txt">cd <span class="ps-str-txt">ming-stack</span></span></div>
-              <div class="ps-line"><span class="ps-prompt-txt">PS ming-stack&gt;&nbsp;</span><span class="ps-cmd-txt">docker compose <span class="ps-flag-txt">up -d</span></span></div>
-              <br>
-              <span class="ps-comment-txt"># Verifica que los 4 contenedores estén corriendo:</span>
-              <div class="ps-line"><span class="ps-prompt-txt">PS ming-stack&gt;&nbsp;</span><span class="ps-cmd-txt">docker compose <span class="ps-flag-txt">ps</span></span></div>
-            </div>
-          </div>
-          <p style="margin-top:0.6rem">Deberías ver los 4 contenedores con estado <strong style="color:var(--green)">Up</strong>. La primera vez descarga las imágenes (puede tomar unos minutos).</p>
-        </div><!-- /tab-ps -->
-
-      </div>
-
-      <div class="sub">
-        <h3>1.4 — Verificar acceso a las interfaces</h3>
-        <table>
-          <tr><th>Servicio</th><th>URL</th><th>Usuario / Contraseña</th></tr>
-          <tr><td>InfluxDB</td><td><a href="http://localhost:8086" target="_blank">localhost:8086</a></td><td><code>admin</code> / <code>adminpassword</code></td></tr>
-          <tr><td>Node-RED</td><td><a href="http://localhost:1880" target="_blank">localhost:1880</a></td><td>(sin autenticación)</td></tr>
-          <tr><td>Grafana</td><td><a href="http://localhost:3000" target="_blank">localhost:3000</a></td><td><code>admin</code> / <code>admin</code></td></tr>
-        </table>
-      </div>
-
-      <button class="mark-done" onclick="markDone(1)">✓ Paso completado</button>
-    </div>
+  <!-- FLUJO DE DATOS -->
+  <div class="flow" style="margin-bottom:2rem">
+    <span class="fn">[inject 5s]</span> → <span class="fn">[Simular MQ-135]</span> → <span class="fn">[MQTT OUT sensor/gas]</span>
+                              ↓
+    <span class="fn">[MQTT IN sensor/gas]</span> → <span class="fn">[Validar 0–1023]</span> → <span class="fn">[payload InfluxDB]</span> → <span class="fn">[InfluxDB OUT]</span>
+                              ↓
+    <span class="fl">bucket: gas_data · measurement: gas_level · field: value</span>
+                              ↓
+    <span class="fn">[Grafana :3000]</span> — Dashboard tiempo real · Refresh 5s
   </div>
 
-  <!-- ════════════════════════════════════════
-       PASO 2 — IP DEL HOST
-  ══════════════════════════════════════════ -->
-  <div class="step" id="step2">
-    <div class="step-header" onclick="toggleStep('step2')">
-      <div class="step-num" id="num2">2</div>
-      <div class="step-title">Obtener la IP del host (para el ESP8266)</div>
-      <span class="step-toggle" id="tog2">▾</span>
+  <!-- ══════════════════════════════════
+       PASO 1 — CLONAR Y LEVANTAR
+  ═════════════════════════════════════ -->
+  <div class="step" id="s1">
+    <div class="step-header" onclick="toggle('s1')">
+      <div class="step-num">1</div>
+      <div class="step-title">Clonar el repo y levantar el stack</div>
+      <span class="step-arrow" id="arr-s1">▾</span>
     </div>
-    <div class="step-body" id="body2">
+    <div class="step-body open" id="body-s1">
 
-      <div class="callout warn">
-        <span class="callout-icon">⚠️</span> <strong>No uses <code>localhost</code></strong> desde el ESP8266. Ese nombre solo funciona dentro del mismo equipo. El ESP necesita la IP real de tu PC en la red local.
-      </div>
-
-      <div class="sub">
-        <h3>Cómo obtener tu IP</h3>
-        <div class="ps-window">
-          <div class="ps-titlebar">Windows PowerShell<button class="ps-copy" onclick="copyPS('cmd-ip')">Copiar</button></div>
-          <div class="ps-body" id="cmd-ip">
-            <div class="ps-line"><span class="ps-prompt-txt">PS C:\Users\Tu&gt;&nbsp;</span><span class="ps-cmd-txt">ipconfig</span></div>
-          </div>
-        </div>
-        <p>Busca en el resultado la sección de tu adaptador activo (el que usas para conectarte a internet). Verás algo así:</p>
-        <div class="ps-window">
-          <div class="ps-titlebar">Resultado de ipconfig</div>
-          <div class="ps-body">
-            <span class="ps-output-txt">Adaptador de red inalámbrica Wi-Fi:</span>
-            <span class="ps-output-txt">&nbsp;&nbsp; ...</span>
-            <span class="ps-output-txt">&nbsp;&nbsp; <span style="color:var(--ps-prompt)">Dirección IPv4. . . . . . : 192.168.1.100</span>  ← Esta es tu IP</span>
-            <span class="ps-output-txt">&nbsp;&nbsp; Máscara de subred . . . . : 255.255.255.0</span>
-            <span class="ps-output-txt">&nbsp;&nbsp; Puerta de enlace . . . . : 192.168.1.1</span>
-          </div>
-        </div>
-        <div class="callout tip"><span class="callout-icon">💡</span> Anota esa IP — la usarás en el siguiente paso dentro del archivo <code>gas-sensor.yaml</code>.</div>
-      </div>
-
-      <button class="mark-done" onclick="markDone(2)">✓ Paso completado</button>
-    </div>
-  </div>
-
-  <!-- ════════════════════════════════════════
-       PASO 3 — ESPHOME (VÍA DASHBOARD WEB)
-  ══════════════════════════════════════════ -->
-  <div class="step" id="step3">
-    <div class="step-header" onclick="toggleStep('step3')">
-      <div class="step-num" id="num3">3</div>
-      <div class="step-title">Flashear el ESP8266 con ESPHome Dashboard</div>
-      <span class="step-toggle" id="tog3">▾</span>
-    </div>
-    <div class="step-body" id="body3">
-
-      <div class="callout tip">
-        <span class="callout-icon">🚀</span> <strong>La forma más fácil:</strong> usamos el <strong>ESPHome Dashboard</strong> — una interfaz web que corre en Docker, sin instalar nada en Python. Solo copiar, pegar y hacer clic.
-      </div>
-
-      <div class="sub">
-        <h3>3.1 — Agregar ESPHome Dashboard al docker-compose</h3>
-        <p>Abre el archivo <code>docker-compose.yml</code> con el Bloc de notas y agrega este bloque al final de la sección <code>services:</code>, antes de la línea <code>volumes:</code>:</p>
-        <div class="yaml-block">
-          <span class="label">docker-compose.yml</span>
-          <span class="yk">&nbsp;&nbsp;esphome:</span><br>
-          <span class="yv">&nbsp;&nbsp;&nbsp;&nbsp;image: </span><span class="ys">ghcr.io/esphome/esphome</span><br>
-          <span class="yv">&nbsp;&nbsp;&nbsp;&nbsp;container_name: </span><span class="ys">ming_esphome</span><br>
-          <span class="yv">&nbsp;&nbsp;&nbsp;&nbsp;restart: </span><span class="ys">unless-stopped</span><br>
-          <span class="yk">&nbsp;&nbsp;&nbsp;&nbsp;ports:</span><br>
-          <span class="ys">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- "6052:6052"</span><br>
-          <span class="yk">&nbsp;&nbsp;&nbsp;&nbsp;volumes:</span><br>
-          <span class="ys">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- ./esphome_config:/config</span><br>
-          <span class="yv">&nbsp;&nbsp;&nbsp;&nbsp;network_mode: </span><span class="ys">host</span>&nbsp;&nbsp;<span class="yc"># Necesario para detectar el ESP por USB en Windows</span>
-        </div>
-        <div class="callout warn"><span class="callout-icon">⚠️</span> <strong>Nota sobre USB en Windows:</strong> Docker Desktop no puede acceder directamente al puerto USB/COM del ESP. Para la primera carga por USB hay que usar el método alternativo de la línea de comandos (ver sección 3-B más abajo). Una vez flasheado, todas las actualizaciones se hacen por WiFi (OTA) desde el Dashboard sin este límite.</div>
-      </div>
-
-      <div class="sub">
-        <h3>3.2 — Crear la carpeta de configuración y copiar el YAML</h3>
-        <div class="ps-window">
-          <div class="ps-titlebar">Windows PowerShell<button class="ps-copy" onclick="copyPS('cmd-esphome-dir')">Copiar</button></div>
-          <div class="ps-body" id="cmd-esphome-dir">
-            <div class="ps-line"><span class="ps-prompt-txt">PS ming-stack&gt;&nbsp;</span><span class="ps-cmd-txt">mkdir <span class="ps-str-txt">esphome_config</span></span></div>
-            <div class="ps-line"><span class="ps-prompt-txt">PS ming-stack&gt;&nbsp;</span><span class="ps-cmd-txt">copy <span class="ps-str-txt">gas-sensor.yaml</span> <span class="ps-str-txt">esphome_config\</span></span></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="sub">
-        <h3>3.3 — Editar el YAML: solo 3 líneas a cambiar</h3>
-        <p>Abre <code>esphome_config\gas-sensor.yaml</code> con el Bloc de notas y cambia únicamente esto:</p>
-        <div class="yaml-block">
-          <span class="label">gas-sensor.yaml</span>
-          <span class="yk">wifi:</span><br>
-          <span class="yv">&nbsp;&nbsp;ssid: </span><span class="ya">"NOMBRE_DE_TU_RED_WIFI"</span>&nbsp;&nbsp;&nbsp;<span class="yc"># ← Cambia esto</span><br>
-          <span class="yv">&nbsp;&nbsp;password: </span><span class="ya">"TU_CONTRASEÑA_WIFI"</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="yc"># ← Cambia esto</span><br>
-          <br>
-          <span class="yk">mqtt:</span><br>
-          <span class="yv">&nbsp;&nbsp;broker: </span><span class="ya">"192.168.1.100"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="yc"># ← IP de tu PC (Paso 2)</span>
-        </div>
-        <p>Guarda el archivo.</p>
-      </div>
-
-      <div class="sub">
-        <h3>3-A — Primera carga: método pip (más directo para USB)</h3>
-        <p>Para la carga inicial por USB, instala ESPHome en Python e instala el firmware:</p>
-        <div class="ps-window">
-          <div class="ps-titlebar">Windows PowerShell — Instalar ESPHome<button class="ps-copy" onclick="copyPS('cmd-pip')">Copiar</button></div>
-          <div class="ps-body" id="cmd-pip">
-            <span class="ps-comment-txt"># Paso 1: Verificar que tienes Python instalado</span>
-            <div class="ps-line"><span class="ps-prompt-txt">PS&gt;&nbsp;</span><span class="ps-cmd-txt">python <span class="ps-flag-txt">--version</span></span></div>
-            <br>
-            <span class="ps-comment-txt"># Paso 2: Instalar ESPHome</span>
-            <div class="ps-line"><span class="ps-prompt-txt">PS&gt;&nbsp;</span><span class="ps-cmd-txt">pip install <span class="ps-str-txt">esphome</span></span></div>
-            <br>
-            <span class="ps-comment-txt"># Paso 3: Desde la carpeta ming-stack, flashear por USB</span>
-            <div class="ps-line"><span class="ps-prompt-txt">PS ming-stack&gt;&nbsp;</span><span class="ps-cmd-txt">esphome run <span class="ps-str-txt">esphome_config\gas-sensor.yaml</span></span></div>
-          </div>
-        </div>
-        <div class="callout info"><span class="callout-icon">ℹ️</span> ESPHome te mostrará una lista de puertos COM disponibles. Selecciona el que corresponde al NodeMCU (aparece como <strong>USB-SERIAL</strong> o <strong>Silicon Labs CP210x</strong> en el Administrador de dispositivos). Si Python no está instalado, descárgalo desde <a href="https://python.org" target="_blank">python.org</a> — marca la opción <em>"Add Python to PATH"</em> durante la instalación.</div>
-      </div>
-
-      <div class="sub">
-        <h3>3-B — Actualizaciones posteriores: OTA desde el Dashboard</h3>
-        <p>Una vez que el ESP está conectado al WiFi, todas las actualizaciones siguientes se hacen así:</p>
-        <div class="visual-steps">
-          <div class="vstep">
-            <div class="vstep-num"></div>
-            <div class="vstep-content">
-              <p>Reinicia el stack Docker para incluir el servicio ESPHome:</p>
-              <div class="ps-window" style="margin:0.5rem 0">
-                <div class="ps-titlebar">PowerShell<button class="ps-copy" onclick="copyPS('cmd-restart')">Copiar</button></div>
-                <div class="ps-body" id="cmd-restart">
-                  <div class="ps-line"><span class="ps-prompt-txt">PS ming-stack&gt;&nbsp;</span><span class="ps-cmd-txt">docker compose <span class="ps-flag-txt">up -d</span></span></div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="vstep">
-            <div class="vstep-num"></div>
-            <div class="vstep-content">
-              <p>Abre el Dashboard de ESPHome en el navegador:</p>
-              <div class="screen-hint">→ http://localhost:6052</div>
-            </div>
-          </div>
-          <div class="vstep">
-            <div class="vstep-num"></div>
-            <div class="vstep-content"><p>Verás la tarjeta de tu dispositivo <strong>gas-sensor</strong>. Haz clic en <strong>INSTALL</strong> → selecciona <strong>Wirelessly</strong> (OTA).</p></div>
-          </div>
-          <div class="vstep">
-            <div class="vstep-num"></div>
-            <div class="vstep-content"><p>ESPHome compila el firmware y lo envía por WiFi. Puedes ver los logs en tiempo real desde el mismo Dashboard con el botón <strong>LOGS</strong>.</p></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="sub">
-        <h3>3.4 — Verificar que el ESP publica datos</h3>
-        <p>Con el ESP corriendo, verifica que llegan mensajes MQTT:</p>
-        <div class="ps-window">
-          <div class="ps-titlebar">Windows PowerShell — Escuchar MQTT<button class="ps-copy" onclick="copyPS('cmd-sub')">Copiar</button></div>
-          <div class="ps-body" id="cmd-sub">
-            <div class="ps-line"><span class="ps-prompt-txt">PS&gt;&nbsp;</span><span class="ps-cmd-txt">docker exec <span class="ps-flag-txt">-it</span> ming_mosquitto mosquitto_sub <span class="ps-flag-txt">-h</span> <span class="ps-str-txt">localhost</span> <span class="ps-flag-txt">-t</span> <span class="ps-str-txt">"sensor/gas"</span> <span class="ps-flag-txt">-v</span></span></div>
-            <br>
-            <span class="ps-comment-txt"># Cada 10 segundos deberías ver algo como:</span>
-            <span class="ps-output-txt">sensor/gas 542</span>
-            <span class="ps-output-txt">sensor/gas 538</span>
-            <span class="ps-output-txt">sensor/gas 551</span>
-          </div>
-        </div>
-      </div>
-
-      <button class="mark-done" onclick="markDone(3)">✓ Paso completado</button>
-    </div>
-  </div>
-
-  <!-- ════════════════════════════════════════
-       PASO 4 — NODE-RED
-  ══════════════════════════════════════════ -->
-  <div class="step" id="step4">
-    <div class="step-header" onclick="toggleStep('step4')">
-      <div class="step-num" id="num4">4</div>
-      <div class="step-title">Configurar Node-RED (MQTT → InfluxDB)</div>
-      <span class="step-toggle" id="tog4">▾</span>
-    </div>
-    <div class="step-body" id="body4">
-
-      <div class="sub">
-        <h3>4.1 — Instalar el nodo InfluxDB</h3>
-        <div class="visual-steps">
-          <div class="vstep">
-            <div class="vstep-num"></div>
-            <div class="vstep-content"><p>Abre Node-RED en el navegador: <a href="http://localhost:1880" target="_blank">localhost:1880</a></p></div>
-          </div>
-          <div class="vstep">
-            <div class="vstep-num"></div>
-            <div class="vstep-content">
-              <p>Haz clic en el menú ☰ (esquina superior derecha) → <strong>Manage palette</strong> → pestaña <strong>Install</strong></p>
-              <div class="screen-hint">Busca: node-red-contrib-influxdb</div>
-            </div>
-          </div>
-          <div class="vstep">
-            <div class="vstep-num"></div>
-            <div class="vstep-content"><p>Haz clic en <strong>Install</strong> y espera a que aparezca el mensaje de éxito.</p></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="sub">
-        <h3>4.2 — Importar el flujo listo</h3>
-        <div class="visual-steps">
-          <div class="vstep">
-            <div class="vstep-num"></div>
-            <div class="vstep-content">
-              <p>Menú ☰ → <strong>Import</strong></p>
-            </div>
-          </div>
-          <div class="vstep">
-            <div class="vstep-num"></div>
-            <div class="vstep-content">
-              <p>Haz clic en <strong>"select a file to import"</strong> → selecciona el archivo <code>nodered-flow.json</code></p>
-            </div>
-          </div>
-          <div class="vstep">
-            <div class="vstep-num"></div>
-            <div class="vstep-content"><p>Clic en <strong>Import</strong>. Aparecerán 3 nodos en el canvas.</p></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="sub">
-        <h3>4.3 — Configurar el nodo InfluxDB</h3>
-        <div class="visual-steps">
-          <div class="vstep">
-            <div class="vstep-num"></div>
-            <div class="vstep-content"><p>Doble clic sobre el nodo morado <strong>"Escribir en gas_data"</strong></p></div>
-          </div>
-          <div class="vstep">
-            <div class="vstep-num"></div>
-            <div class="vstep-content"><p>Junto a "Server", haz clic en el lápiz ✏️ para editar el servidor</p></div>
-          </div>
-          <div class="vstep">
-            <div class="vstep-num"></div>
-            <div class="vstep-content">
-              <p>Verifica que estos valores estén exactamente así:</p>
-              <table style="margin-top:0.5rem">
-                <tr><th>Campo</th><th>Valor</th></tr>
-                <tr><td>Version</td><td><code>2.0</code></td></tr>
-                <tr><td>URL</td><td><code>http://ming_influxdb:8086</code></td></tr>
-                <tr><td>Token</td><td><code>ming-token</code></td></tr>
-                <tr><td>Organisation</td><td><code>myorg</code></td></tr>
-                <tr><td>Bucket</td><td><code>gas_data</code></td></tr>
-              </table>
-            </div>
-          </div>
-          <div class="vstep">
-            <div class="vstep-num"></div>
-            <div class="vstep-content"><p>Clic en <strong>Update</strong> → <strong>Done</strong></p></div>
-          </div>
-          <div class="vstep">
-            <div class="vstep-num"></div>
-            <div class="vstep-content"><p>Clic en el botón rojo <strong>Deploy</strong> (esquina superior derecha). El nodo MQTT mostrará el indicador verde <strong>"connected"</strong>.</p></div>
-          </div>
-        </div>
-      </div>
-
-      <button class="mark-done" onclick="markDone(4)">✓ Paso completado</button>
-    </div>
-  </div>
-
-  <!-- ════════════════════════════════════════
-       PASO 5 — GRAFANA
-  ══════════════════════════════════════════ -->
-  <div class="step" id="step5">
-    <div class="step-header" onclick="toggleStep('step5')">
-      <div class="step-num" id="num5">5</div>
-      <div class="step-title">Crear dashboard en Grafana</div>
-      <span class="step-toggle" id="tog5">▾</span>
-    </div>
-    <div class="step-body" id="body5">
-
-      <div class="sub">
-        <h3>5.1 — Agregar InfluxDB como fuente de datos</h3>
-        <div class="visual-steps">
-          <div class="vstep">
-            <div class="vstep-num"></div>
-            <div class="vstep-content"><p>Abre <a href="http://localhost:3000" target="_blank">localhost:3000</a> → login: <code>admin</code> / <code>admin</code></p></div>
-          </div>
-          <div class="vstep">
-            <div class="vstep-num"></div>
-            <div class="vstep-content">
-              <p>Menú lateral → <strong>Connections</strong> → <strong>Data sources</strong> → <strong>Add data source</strong> → elige <strong>InfluxDB</strong></p>
-            </div>
-          </div>
-          <div class="vstep">
-            <div class="vstep-num"></div>
-            <div class="vstep-content">
-              <p>Configura exactamente:</p>
-              <table style="margin-top:0.5rem">
-                <tr><th>Campo</th><th>Valor</th></tr>
-                <tr><td>Query Language</td><td><strong>Flux</strong></td></tr>
-                <tr><td>URL</td><td><code>http://ming_influxdb:8086</code></td></tr>
-                <tr><td>Organisation</td><td><code>myorg</code></td></tr>
-                <tr><td>Token</td><td><code>ming-token</code></td></tr>
-                <tr><td>Default Bucket</td><td><code>gas_data</code></td></tr>
-              </table>
-            </div>
-          </div>
-          <div class="vstep">
-            <div class="vstep-num"></div>
-            <div class="vstep-content"><p>Clic en <strong>Save &amp; Test</strong> → debe aparecer ✅ <em>"datasource is working"</em></p></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="sub">
-        <h3>5.2 — Crear el dashboard y el panel</h3>
-        <div class="visual-steps">
-          <div class="vstep">
-            <div class="vstep-num"></div>
-            <div class="vstep-content"><p>Menú lateral → <strong>Dashboards</strong> → <strong>New</strong> → <strong>New Dashboard</strong> → <strong>Add visualization</strong></p></div>
-          </div>
-          <div class="vstep">
-            <div class="vstep-num"></div>
-            <div class="vstep-content"><p>Selecciona el datasource <strong>InfluxDB</strong> que acabas de crear</p></div>
-          </div>
-          <div class="vstep">
-            <div class="vstep-num"></div>
-            <div class="vstep-content">
-              <p>En el editor de consulta (Flux), pega esta query:</p>
-              <div class="flux-block">
-                <span class="label">Flux</span>
-                <span class="ff">from</span><span style="color:#e6edf3">(</span><span class="fk">bucket</span><span style="color:#e6edf3">: </span><span class="fs">"gas_data"</span><span style="color:#e6edf3">)</span><br>
-                &nbsp;&nbsp;<span class="fp">|&gt;</span> <span class="ff">range</span><span style="color:#e6edf3">(</span><span class="fk">start</span><span style="color:#e6edf3">: </span><span class="fs">-1h</span><span style="color:#e6edf3">)</span><br>
-                &nbsp;&nbsp;<span class="fp">|&gt;</span> <span class="ff">filter</span><span style="color:#e6edf3">(</span><span class="fk">fn</span><span style="color:#e6edf3">: (r) =&gt; r._measurement == </span><span class="fs">"gas_level"</span><span style="color:#e6edf3">)</span><br>
-                &nbsp;&nbsp;<span class="fp">|&gt;</span> <span class="ff">filter</span><span style="color:#e6edf3">(</span><span class="fk">fn</span><span style="color:#e6edf3">: (r) =&gt; r._field == </span><span class="fs">"value"</span><span style="color:#e6edf3">)</span><br>
-                &nbsp;&nbsp;<span class="fp">|&gt;</span> <span class="ff">aggregateWindow</span><span style="color:#e6edf3">(</span><span class="fk">every</span><span style="color:#e6edf3">: </span><span class="fs">10s</span><span style="color:#e6edf3">, </span><span class="fk">fn</span><span style="color:#e6edf3">: mean, </span><span class="fk">createEmpty</span><span style="color:#e6edf3">: false)</span><br>
-                &nbsp;&nbsp;<span class="fp">|&gt;</span> <span class="ff">yield</span><span style="color:#e6edf3">(</span><span class="fk">name</span><span style="color:#e6edf3">: </span><span class="fs">"mean"</span><span style="color:#e6edf3">)</span>
-              </div>
-            </div>
-          </div>
-          <div class="vstep">
-            <div class="vstep-num"></div>
-            <div class="vstep-content"><p>Panel derecho → <strong>Title:</strong> <code>Nivel de Gas MQ-135</code> → clic en <strong>Apply</strong></p></div>
-          </div>
-          <div class="vstep">
-            <div class="vstep-num"></div>
-            <div class="vstep-content"><p>Guarda el dashboard: ícono 💾 → nombre <code>Gas Sensor</code></p></div>
-          </div>
-          <div class="vstep">
-            <div class="vstep-num"></div>
-            <div class="vstep-content"><p>En la esquina superior derecha → selector de tiempo → <strong>Last 1 hour</strong> + <strong>Auto-refresh: 10s</strong></p></div>
-          </div>
-        </div>
-      </div>
-
-      <button class="mark-done" onclick="markDone(5)">✓ Paso completado</button>
-    </div>
-  </div>
-
-  <!-- ════════════════════════════════════════
-       FLUJO DE DATOS
-  ══════════════════════════════════════════ -->
-  <div class="step" style="margin-top:2rem">
-    <div class="step-header" onclick="toggleStep('stepDiag')" style="cursor:pointer">
-      <div class="step-num" style="background:var(--purple)">⚙</div>
-      <div class="step-title">Flujo de datos</div>
-      <span class="step-toggle" id="togDiag">▾</span>
-    </div>
-    <div class="step-body open" id="bodyDiag">
-      <div class="flow">
-        <span class="node">[NodeMCU v2]</span><br>
-        &nbsp;&nbsp;└── A0 → <span class="label">MQ-135 (0-1023)</span><br>
-        &nbsp;&nbsp;└── WiFi → MQTT PUBLISH <span class="label">"sensor/gas"</span> cada 10s<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="arrow">▼</span><br>
-        <span class="node">[Mosquitto :1883]</span> <span class="arrow">←→</span> <span class="node">[Node-RED :1880]</span><br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── Parsea payload numérico<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── InfluxDB OUT<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="arrow">▼</span><br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="node">[InfluxDB :8086]</span> bucket: <span class="label">gas_data</span><br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="arrow">▼</span><br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="node">[Grafana :3000]</span> — Dashboard tiempo real
-      </div>
-    </div>
-  </div>
-
-  <!-- ════════════════════════════════════════
-       PROBLEMAS COMUNES
-  ══════════════════════════════════════════ -->
-  <div class="step" style="margin-top:1rem">
-    <div class="step-header" onclick="toggleStep('stepProb')">
-      <div class="step-num" style="background:var(--red)">!</div>
-      <div class="step-title">Solución de problemas comunes</div>
-      <span class="step-toggle" id="togProb">▾</span>
-    </div>
-    <div class="step-body" id="bodyProb">
+      <div class="section-label">Requisitos</div>
       <table>
-        <tr><th>Síntoma</th><th>Causa probable</th><th>Solución</th></tr>
-        <tr><td>ESP8266 no conecta al broker</td><td>IP incorrecta en <code>gas-sensor.yaml</code></td><td>Verificar con <code>ipconfig</code>, usar IP del adaptador WiFi/Ethernet</td></tr>
-        <tr><td>Node-RED: nodo MQTT en rojo</td><td>Mosquitto aún no inició</td><td>Esperar 30 segundos y hacer clic en Deploy nuevamente</td></tr>
-        <tr><td>Node-RED no escribe en InfluxDB</td><td>Token o bucket incorrectos</td><td>Revisar configuración del nodo InfluxDB en Node-RED</td></tr>
-        <tr><td>Grafana muestra "No data"</td><td>Flujo Node-RED no desplegado</td><td>Clic en Deploy en Node-RED, verificar nodo "connected"</td></tr>
-        <tr><td>Mosquitto rechaza conexión</td><td>Firewall bloquea puerto 1883</td><td>Windows Defender → permitir Docker Desktop en red privada</td></tr>
-        <tr><td>ESPHome: "No module named esphome"</td><td>Python no está en PATH</td><td>Usar <code>python -m esphome run gas-sensor.yaml</code></td></tr>
-        <tr><td>Docker: "port is already allocated"</td><td>Otro servicio usa ese puerto</td><td>Identificar con <code>netstat -ano</code> y terminar el proceso</td></tr>
+        <tr><th>Herramienta</th><th>Versión mínima</th><th>Verificar</th></tr>
+        <tr><td>Docker Desktop</td><td>24.x</td><td><code>docker --version</code></td></tr>
+        <tr><td>Docker Compose v2</td><td>incluido</td><td><code>docker compose version</code></td></tr>
+        <tr><td>Puertos libres</td><td>—</td><td>1883 · 1880 · 8086 · 3000</td></tr>
       </table>
 
-      <div class="sub" style="margin-top:1.5rem">
-        <h3>Comandos útiles de mantenimiento</h3>
-        <div class="ps-window">
-          <div class="ps-titlebar">Windows PowerShell<button class="ps-copy" onclick="copyPS('cmd-maint')">Copiar</button></div>
-          <div class="ps-body" id="cmd-maint">
-            <span class="ps-comment-txt"># Ver logs de un servicio en tiempo real</span>
-            <div class="ps-line"><span class="ps-prompt-txt">PS ming-stack&gt;&nbsp;</span><span class="ps-cmd-txt">docker compose <span class="ps-flag-txt">logs -f</span> <span class="ps-str-txt">nodered</span></span></div>
-            <br>
-            <span class="ps-comment-txt"># Reiniciar un servicio</span>
-            <div class="ps-line"><span class="ps-prompt-txt">PS ming-stack&gt;&nbsp;</span><span class="ps-cmd-txt">docker compose <span class="ps-flag-txt">restart</span> <span class="ps-str-txt">mosquitto</span></span></div>
-            <br>
-            <span class="ps-comment-txt"># Detener todo el stack</span>
-            <div class="ps-line"><span class="ps-prompt-txt">PS ming-stack&gt;&nbsp;</span><span class="ps-cmd-txt">docker compose <span class="ps-flag-txt">down</span></span></div>
-            <br>
-            <span class="ps-comment-txt"># ⚠️ Detener y BORRAR volúmenes (elimina todos los datos)</span>
-            <div class="ps-line"><span class="ps-prompt-txt">PS ming-stack&gt;&nbsp;</span><span class="ps-cmd-txt">docker compose <span class="ps-flag-txt">down -v</span></span></div>
-          </div>
-        </div>
+      <div class="section-label">Clonar y levantar en un comando</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">PowerShell</span><button class="copy-btn" onclick="copyBlock(this)">Copiar</button></div>
+        <div class="code-body"><span class="cm"># Clonar el repo y levantar los 4 servicios</span>
+git clone https://github.com/roserocarlos/Ming.git
+cd Ming
+docker compose up -d</div>
       </div>
+
+      <div class="callout info">Espere ~30 segundos al primer arranque. Docker descargará las imágenes la primera vez.</div>
+
+      <div class="section-label">Verificar que los 4 contenedores están corriendo</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">PowerShell</span><button class="copy-btn" onclick="copyBlock(this)">Copiar</button></div>
+        <div class="code-body">docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Image}}"
+
+<span class="co"># Resultado esperado:
+# ming_mosquitto   Up X minutes   eclipse-mosquitto:2.0
+# ming_influxdb    Up X minutes   influxdb:2.7
+# ming_nodered     Up X minutes   nodered/node-red:latest
+# ming_grafana     Up X minutes   grafana/grafana:latest</span></div>
+      </div>
+
+      <div class="section-label">URLs de acceso</div>
+      <table>
+        <tr><th>Servicio</th><th>URL</th><th>Usuario</th><th>Contraseña</th></tr>
+        <tr><td>Node-RED</td><td><a href="http://localhost:1880" target="_blank">localhost:1880</a></td><td>—</td><td>—</td></tr>
+        <tr><td>InfluxDB</td><td><a href="http://localhost:8086" target="_blank">localhost:8086</a></td><td><code>admin</code></td><td><code>adminpassword</code></td></tr>
+        <tr><td>Grafana</td><td><a href="http://localhost:3000" target="_blank">localhost:3000</a></td><td><code>admin</code></td><td><code>admin</code></td></tr>
+        <tr><td>Mosquitto MQTT</td><td>mqtt://localhost:1883</td><td>—</td><td>—</td></tr>
+      </table>
+
+      <button class="done-btn" onclick="markDone('s1', 1)">✓ Paso completado</button>
     </div>
   </div>
 
-</div><!-- /container -->
+  <!-- ══════════════════════════════════
+       PASO 2 — NODE-RED
+  ═════════════════════════════════════ -->
+  <div class="step" id="s2">
+    <div class="step-header" onclick="toggle('s2')">
+      <div class="step-num">2</div>
+      <div class="step-title">Configurar Node-RED — importar el flujo</div>
+      <span class="step-arrow" id="arr-s2">▾</span>
+    </div>
+    <div class="step-body" id="body-s2">
+
+      <div class="callout warn">
+        <strong>⚠️ Paso obligatorio antes de importar.</strong> Si ya hubo un deploy anterior en este contenedor, las credenciales encriptadas pueden quedar corruptas. Ejecute esto primero:
+      </div>
+
+      <div class="section-label">2.1 — Limpiar credenciales y reiniciar Node-RED</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">PowerShell</span><button class="copy-btn" onclick="copyBlock(this)">Copiar</button></div>
+        <div class="code-body">docker exec ming_nodered rm -f /data/flows_cred.json
+docker restart ming_nodered
+
+<span class="cm"># Espere ~10 segundos a que Node-RED vuelva a subir</span></div>
+      </div>
+
+      <div class="section-label">2.2 — Importar el flujo nodered-flow.json</div>
+      <ol class="steps-list">
+        <li><p>Abra <a href="http://localhost:1880" target="_blank">localhost:1880</a></p></li>
+        <li><p>Menú <strong>≡</strong> (esquina superior derecha) → <strong>Import</strong></p></li>
+        <li><p>Clic en <strong>"select a file to import"</strong> → seleccione <code>nodered-flow.json</code> del repo</p></li>
+        <li><p>En el diálogo que aparece, marque <strong>replace</strong> en los dos config nodes:<br><code>Mosquitto Local</code> y <code>[v2.0] InfluxDB Local</code></p></li>
+        <li><p>Clic en <strong>Import selected</strong></p></li>
+      </ol>
+
+      <div class="section-label">2.3 — Configurar el token de InfluxDB</div>
+      <ol class="steps-list">
+        <li><p>Menú <strong>≡</strong> → <strong>Configuration nodes</strong> → <strong>InfluxDB Local</strong> → doble clic</p></li>
+        <li><p>Verifique y complete los campos:</p></li>
+      </ol>
+      <table>
+        <tr><th>Campo</th><th>Valor</th></tr>
+        <tr><td>URL</td><td><code>http://ming_influxdb:8086</code></td></tr>
+        <tr><td>Version</td><td><code>2.0</code></td></tr>
+        <tr><td>Token</td><td><code>ming-token</code></td></tr>
+        <tr><td>Organisation</td><td><code>myorg</code></td></tr>
+        <tr><td>Default Bucket</td><td><code>gas_data</code></td></tr>
+      </table>
+      <ol class="steps-list" style="margin-top:0.8rem">
+        <li><p>Clic en <strong>Update → Done</strong></p></li>
+        <li><p>Clic en el botón rojo <strong>Deploy</strong> (esquina superior derecha)</p></li>
+        <li><p>Los nodos MQTT deben mostrar indicador verde <strong>"connected"</strong></p></li>
+      </ol>
+
+      <div class="callout ok">El flujo arranca automáticamente y publica un valor de gas simulado cada 5 segundos en el tópico <code>sensor/gas</code>, escribiendo en InfluxDB.</div>
+
+      <div class="section-label">Verificar en el panel de debug</div>
+      <p>En Node-RED, abra el panel de debug (ícono 🐛 a la derecha). Debe ver mensajes como:</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Debug Node-RED</span></div>
+        <div class="code-body"><span class="co">✅ Payload → InfluxDB : msg.payload : Object
+{ value: 429 }
+✅ Payload → InfluxDB : msg.payload : Object
+{ value: 387 }</span></div>
+      </div>
+      <p>Si aparece <strong style="color:var(--red)">❌ Error InfluxDB</strong>, el mensaje del debug indica exactamente qué falló y cómo resolverlo.</p>
+
+      <button class="done-btn" onclick="markDone('s2', 2)">✓ Paso completado</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       PASO 3 — INFLUXDB VERIFICAR
+  ═════════════════════════════════════ -->
+  <div class="step" id="s3">
+    <div class="step-header" onclick="toggle('s3')">
+      <div class="step-num">3</div>
+      <div class="step-title">Verificar datos en InfluxDB</div>
+      <span class="step-arrow" id="arr-s3">▾</span>
+    </div>
+    <div class="step-body" id="body-s3">
+
+      <div class="section-label">3.1 — Desde la UI</div>
+      <ol class="steps-list">
+        <li><p>Abra <a href="http://localhost:8086" target="_blank">localhost:8086</a> → login: <code>admin</code> / <code>adminpassword</code></p></li>
+        <li><p>Menú izquierdo → <strong>Data Explorer</strong></p></li>
+        <li><p>FROM → seleccione <code>gas_data</code></p></li>
+        <li><p>Filter → <code>_measurement</code> → <code>gas_level</code></p></li>
+        <li><p>Filter → <code>_field</code> → <code>value</code></p></li>
+        <li><p>Rango de tiempo → <strong>Last 5 minutes</strong> → clic en <strong>Submit</strong></p></li>
+      </ol>
+      <div class="callout ok">Debe aparecer la gráfica con valores entre 250 y 650 cada 5 segundos.</div>
+
+      <div class="section-label">3.2 — Desde consola (verificación rápida)</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">PowerShell</span><button class="copy-btn" onclick="copyBlock(this)">Copiar</button></div>
+        <div class="code-body"><span class="cm"># Escribir un punto de prueba manualmente</span>
+docker exec -it ming_influxdb influx write --bucket gas_data --org myorg --token ming-token "gas_level value=888"
+
+<span class="cm"># Si no da error = InfluxDB funcionando correctamente</span></div>
+      </div>
+
+      <div class="section-label">Si el bucket gas_data no existe</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">PowerShell</span><button class="copy-btn" onclick="copyBlock(this)">Copiar</button></div>
+        <div class="code-body">docker exec -it ming_influxdb influx bucket create --name gas_data --org myorg --token ming-token --retention 0</div>
+      </div>
+
+      <button class="done-btn" onclick="markDone('s3', 3)">✓ Paso completado</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       PASO 4 — GRAFANA DATASOURCE
+  ═════════════════════════════════════ -->
+  <div class="step" id="s4">
+    <div class="step-header" onclick="toggle('s4')">
+      <div class="step-num">4</div>
+      <div class="step-title">Configurar Grafana — datasource InfluxDB</div>
+      <span class="step-arrow" id="arr-s4">▾</span>
+    </div>
+    <div class="step-body" id="body-s4">
+
+      <ol class="steps-list">
+        <li><p>Abra <a href="http://localhost:3000" target="_blank">localhost:3000</a> → login: <code>admin</code> / <code>admin</code></p></li>
+        <li><p>Menú lateral → <strong>Connections</strong> → <strong>Data sources</strong> → <strong>Add data source</strong> → elija <strong>InfluxDB</strong></p></li>
+        <li><p>Configure exactamente estos campos:</p></li>
+      </ol>
+
+      <table>
+        <tr><th>Campo</th><th>Valor</th></tr>
+        <tr><td>Query Language</td><td><strong>Flux</strong> ← importante, no InfluxQL</td></tr>
+        <tr><td>URL</td><td><code>http://ming_influxdb:8086</code></td></tr>
+        <tr><td>Organisation</td><td><code>myorg</code></td></tr>
+        <tr><td>Token</td><td><code>ming-token</code></td></tr>
+        <tr><td>Default Bucket</td><td><code>gas_data</code></td></tr>
+      </table>
+
+      <div class="callout warn"><strong>Query Language debe ser Flux.</strong> Con InfluxQL no aparece el campo Token y la conexión fallará.</div>
+
+      <ol class="steps-list" style="margin-top:1rem">
+        <li><p>Clic en <strong>Save & Test</strong></p></li>
+        <li><p>Debe aparecer: <strong style="color:var(--green)">✅ datasource is working — 3 buckets found</strong></p></li>
+      </ol>
+
+      <button class="done-btn" onclick="markDone('s4', 4)">✓ Paso completado</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       PASO 5 — GRAFANA DASHBOARD
+  ═════════════════════════════════════ -->
+  <div class="step" id="s5">
+    <div class="step-header" onclick="toggle('s5')">
+      <div class="step-num">5</div>
+      <div class="step-title">Importar el dashboard en Grafana</div>
+      <span class="step-arrow" id="arr-s5">▾</span>
+    </div>
+    <div class="step-body" id="body-s5">
+
+      <ol class="steps-list">
+        <li><p>Menú lateral → <strong>Dashboards</strong> → <strong>Import</strong></p></li>
+        <li><p>Clic en <strong>Upload dashboard JSON file</strong> → seleccione <code>grafana-dashboard.json</code> del repo</p></li>
+        <li><p>En el selector <strong>DS_INFLUXDB</strong> → elija el datasource <strong>InfluxDB</strong> que acaba de crear</p></li>
+        <li><p>Clic en <strong>Import</strong></p></li>
+      </ol>
+
+      <div class="callout ok">El dashboard <strong>MING — Monitor Sensor Gas MQ-135</strong> queda disponible con auto-refresh de 5 segundos.</div>
+
+      <div class="section-label">Paneles del dashboard</div>
+      <table>
+        <tr><th>Panel</th><th>Tipo</th><th>Descripción</th></tr>
+        <tr><td>Valor Actual</td><td>Stat</td><td>Último valor con fondo en color por umbral</td></tr>
+        <tr><td>Nivel de Gas</td><td>Gauge</td><td>Aguja visual 0–1023</td></tr>
+        <tr><td>Histórico</td><td>Time series</td><td>Gráfica de línea — últimos 15 minutos</td></tr>
+        <tr><td>Últimas Lecturas</td><td>Table</td><td>Últimas 50 lecturas con color por fila</td></tr>
+      </table>
+
+      <div class="section-label">Umbrales de alerta visual</div>
+      <table>
+        <tr><th>Color</th><th>Rango</th><th>Estado</th></tr>
+        <tr><td><span style="color:var(--green)">● Verde</span></td><td>0 – 499</td><td>Normal</td></tr>
+        <tr><td><span style="color:var(--yellow)">● Amarillo</span></td><td>500 – 699</td><td>Precaución</td></tr>
+        <tr><td><span style="color:var(--red)">● Rojo</span></td><td>700 – 1023</td><td>Alerta</td></tr>
+      </table>
+
+      <button class="done-btn" onclick="markDone('s5', 5)">✓ Paso completado</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       SOLUCIÓN DE PROBLEMAS
+  ═════════════════════════════════════ -->
+  <div class="step" id="sprob">
+    <div class="step-header" onclick="toggle('sprob')" style="border-left: 3px solid var(--red)">
+      <div class="step-num" style="color:var(--red);border-color:var(--red)">!</div>
+      <div class="step-title">Solución de problemas</div>
+      <span class="step-arrow" id="arr-sprob">▾</span>
+    </div>
+    <div class="step-body" id="body-sprob">
+
+      <div class="section-label">Node-RED no escribe en InfluxDB</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">PowerShell</span><button class="copy-btn" onclick="copyBlock(this)">Copiar</button></div>
+        <div class="code-body"><span class="cm"># 1. Limpiar credenciales corruptas</span>
+docker exec ming_nodered rm -f /data/flows_cred.json
+docker restart ming_nodered
+
+<span class="cm"># 2. Esperar ~10 segundos, luego en Node-RED:
+# Configuration nodes → InfluxDB Local → Token: ming-token → Update → Deploy</span></div>
+      </div>
+
+      <div class="section-label">Bucket gas_data no encontrado</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">PowerShell</span><button class="copy-btn" onclick="copyBlock(this)">Copiar</button></div>
+        <div class="code-body">docker exec -it ming_influxdb influx bucket create --name gas_data --org myorg --token ming-token --retention 0</div>
+      </div>
+
+      <div class="section-label">Grafana muestra "No data"</div>
+      <ol class="steps-list">
+        <li><p>Verifique que Node-RED tiene Deploy activo y los nodos MQTT dicen <strong>"connected"</strong></p></li>
+        <li><p>Cambie el rango de tiempo del dashboard a <strong>Last 1 hour</strong> para incluir datos anteriores</p></li>
+        <li><p>Verifique que el datasource usa <strong>Flux</strong> y URL <code>http://ming_influxdb:8086</code> (nombre del contenedor, no localhost)</p></li>
+      </ol>
+
+      <div class="section-label">Verificar nombres exactos de los contenedores</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">PowerShell</span><button class="copy-btn" onclick="copyBlock(this)">Copiar</button></div>
+        <div class="code-body">docker ps --format "table {{.Names}}\t{{.Status}}"
+
+<span class="cm"># Deben aparecer:
+# ming_influxdb · ming_mosquitto · ming_nodered · ming_grafana</span></div>
+      </div>
+
+      <div class="section-label">Comandos de mantenimiento</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">PowerShell</span><button class="copy-btn" onclick="copyBlock(this)">Copiar</button></div>
+        <div class="code-body"><span class="cm"># Ver logs en tiempo real</span>
+docker compose logs -f nodered
+
+<span class="cm"># Reiniciar un servicio</span>
+docker compose restart grafana
+
+<span class="cm"># Detener el stack (conserva datos)</span>
+docker compose down
+
+<span class="cm"># ⚠️ Reset completo — elimina todos los datos</span>
+docker compose down -v</div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
 
 <script>
-  function switchTab(btn, panelId) {
-    // Deactivate all tabs in the same group
-    const tabs = btn.closest('.method-tabs');
-    tabs.querySelectorAll('.mtab').forEach(t => t.classList.remove('active'));
-    btn.classList.add('active');
-    // Hide/show panels — panels are siblings of the tab container
-    const parent = tabs.parentElement;
-    parent.querySelectorAll('.method-panel').forEach(p => p.classList.add('hidden'));
-    const target = document.getElementById(panelId);
-    if (target) target.classList.remove('hidden');
+  const done = {};
+
+  function toggle(id) {
+    const body = document.getElementById('body-' + id);
+    const arr  = document.getElementById('arr-' + id);
+    const open = body.classList.contains('open');
+    body.classList.toggle('open', !open);
+    if (arr) arr.classList.toggle('open', !open);
   }
 
-  const steps = { step1:false, step2:false, step3:false, step4:false, step5:false };
-
-  function toggleStep(id) {
-    const body = document.getElementById('body' + id.replace('step',''));
-    const tog  = document.getElementById('tog'  + id.replace('step',''));
-    if (!body || !tog) {
-      // handle non-numbered steps
-      const bodyEl = document.getElementById('body' + id.replace('step',''));
-      return;
-    }
-    const isOpen = body.classList.contains('open');
-    body.classList.toggle('open', !isOpen);
-    tog.classList.toggle('open', !isOpen);
-  }
-
-  // Override for named steps
-  document.querySelectorAll('.step-header').forEach(h => {
-    h.onclick = function() {
-      const step = this.closest('.step');
-      const bodyId = 'body' + step.id.replace('step','');
-      const togId  = 'tog'  + step.id.replace('step','');
-      const body = document.getElementById(bodyId);
-      const tog  = document.getElementById(togId);
-      if (!body) return;
-      const isOpen = body.classList.contains('open');
-      body.classList.toggle('open', !isOpen);
-      if (tog) tog.classList.toggle('open', !isOpen);
-    };
-  });
-
-  function markDone(n) {
+  function markDone(id, n) {
     const btn = event.target;
     btn.classList.add('done');
     btn.textContent = '✓ Completado';
-    const num = document.getElementById('num' + n);
-    if (num) { num.classList.add('done'); num.textContent = '✓'; }
-    steps['step' + n] = true;
+    document.getElementById(id).classList.add('done');
+    const num = document.querySelector('#' + id + ' .step-num');
+    if (num) { num.textContent = '✓'; }
+    done[n] = true;
     updateProgress();
   }
 
   function updateProgress() {
-    const done = Object.values(steps).filter(Boolean).length;
-    const total = Object.keys(steps).length;
-    const pct = (done / total) * 100;
-    document.getElementById('progressFill').style.width = pct + '%';
-    document.getElementById('progressLabel').textContent = done + ' / ' + total + ' pasos';
+    const total = 5;
+    const n = Object.keys(done).length;
+    document.getElementById('progressFill').style.width = (n / total * 100) + '%';
+    document.getElementById('progressLabel').textContent = n + ' / ' + total + ' pasos';
   }
 
-  function copyPS(id) {
-    const el = document.getElementById(id);
-    if (!el) return;
-    // Extract plain text from PowerShell block
-    const lines = el.querySelectorAll('.ps-line');
-    let text = '';
-    lines.forEach(line => {
-      // Only copy command parts (skip prompt)
-      const parts = line.querySelectorAll('span:not(.ps-prompt-txt)');
-      parts.forEach(p => { text += p.textContent; });
-      text += '\n';
-    });
-    // Also get comment lines
-    el.querySelectorAll('.ps-comment-txt').forEach(c => {
-      // already included via textContent; skip duplicate
-    });
-    // Simpler: just get all text minus prompts
-    const clone = el.cloneNode(true);
-    clone.querySelectorAll('.ps-prompt-txt').forEach(p => p.remove());
-    clone.querySelectorAll('br').forEach(b => b.replaceWith('\n'));
-    text = clone.textContent.replace(/\n{3,}/g, '\n\n').trim();
-
+  function copyBlock(btn) {
+    const body = btn.closest('.code-block').querySelector('.code-body');
+    const text = body.innerText.replace(/^\s*#.*$/gm, line => line).trim();
     navigator.clipboard.writeText(text).then(() => {
-      const btn = event.target;
       const orig = btn.textContent;
       btn.textContent = '✓ Copiado';
-      setTimeout(() => { btn.textContent = orig; }, 1500);
+      setTimeout(() => btn.textContent = orig, 1500);
     });
   }
 
-  // Start with step 1 open
   updateProgress();
 </script>
 </body>
