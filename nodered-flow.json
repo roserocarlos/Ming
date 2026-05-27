@@ -80,7 +80,7 @@
     "type": "function",
     "z": "tab-ming-demo",
     "name": "Preparar para InfluxDB",
-    "func": "var valor = parseFloat(msg.payload);\nif (isNaN(valor)) return null;\nmsg.payload = [{\n    measurement: \"gas_level\",\n    fields: { value: valor },\n    tags: { sensor: \"simulado\", device: \"nodered\" }\n}];\nreturn msg;",
+    "func": "var valor = parseFloat(msg.payload);\nif (isNaN(valor)) return null;\nmsg.payload = [{\n  measurement: \"gas_level\",\n  fields: { value: valor },\n  tags: { sensor: \"simulado\", device: \"nodered\" }\n}];\nreturn msg;",
     "outputs": 1,
     "x": 400,
     "y": 300,
@@ -137,6 +137,7 @@
     "usetls": false,
     "influxdbVersion": "2.0",
     "url": "http://ming_influxdb:8086",
-    "rejectUnauthorized": false
+    "rejectUnauthorized": false,
+    "token": "ming-token"
   }
 ]
