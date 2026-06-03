@@ -33,7 +33,7 @@
     line-height: 1.7;
   }
 
-  /* HEADER */
+  /* ── HEADER ───────────────────────────────────────────── */
   header {
     background: var(--bg2);
     border-bottom: 1px solid var(--border);
@@ -85,10 +85,10 @@
     color: var(--muted);
   }
 
-  /* LAYOUT */
+  /* ── LAYOUT ───────────────────────────────────────────── */
   .container { max-width: 860px; margin: 0 auto; padding: 2rem 1.5rem 5rem; }
 
-  /* PROGRESS */
+  /* ── PROGRESS ─────────────────────────────────────────── */
   .progress {
     background: var(--bg2);
     border: 1px solid var(--border);
@@ -120,7 +120,7 @@
     white-space: nowrap;
   }
 
-  /* STEP CARD */
+  /* ── STEP CARD ────────────────────────────────────────── */
   .step {
     background: var(--bg2);
     border: 1px solid var(--border);
@@ -163,7 +163,7 @@
   .step-body { padding: 0 1.4rem 1.4rem; display: none; }
   .step-body.open { display: block; }
 
-  /* CALLOUTS */
+  /* ── CALLOUTS ─────────────────────────────────────────── */
   .callout {
     border-left: 3px solid;
     border-radius: 0 6px 6px 0;
@@ -176,7 +176,7 @@
   .callout.ok    { background: rgba(52,211,153,0.07);  border-color: var(--green);  color: #6edcb4; }
   .callout.error { background: rgba(248,113,113,0.07); border-color: var(--red);    color: #faa0a0; }
 
-  /* SECTION LABEL */
+  /* ── SECTION LABEL ────────────────────────────────────── */
   .section-label {
     font-family: var(--mono);
     font-size: 10px;
@@ -189,7 +189,7 @@
     border-bottom: 1px solid var(--border);
   }
 
-  /* CODE BLOCK */
+  /* ── CODE BLOCK ───────────────────────────────────────── */
   .code-block {
     background: #050810;
     border: 1px solid var(--border);
@@ -231,22 +231,39 @@
     overflow-x: auto;
     white-space: pre;
   }
-  .cm { color: #4a5568; font-style: italic; } /* comment */
-  .ck { color: var(--accent); }               /* keyword / key */
-  .cs { color: var(--green); }                /* string */
-  .cv { color: var(--orange); }               /* value */
-  .cf { color: var(--yellow); }               /* flag */
-  .co { color: #94a3b8; }                     /* output */
+  .cm { color: #4a5568; font-style: italic; }
+  .ck { color: var(--accent); }
+  .cs { color: var(--green); }
+  .cv { color: var(--orange); }
+  .co { color: #94a3b8; }
 
-  /* TABLE */
+  /* ── TABLE ────────────────────────────────────────────── */
   table { width: 100%; border-collapse: collapse; margin: 0.8rem 0; font-size: 0.88rem; }
-  th { background: var(--bg3); color: var(--muted); font-weight: 600; text-align: left; padding: 7px 12px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; border-bottom: 1px solid var(--border); font-family: var(--mono); }
+  th {
+    background: var(--bg3);
+    color: var(--muted);
+    font-weight: 600;
+    text-align: left;
+    padding: 7px 12px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border-bottom: 1px solid var(--border);
+    font-family: var(--mono);
+  }
   td { padding: 8px 12px; border-bottom: 1px solid var(--border); color: #94a3b8; }
   tr:last-child td { border-bottom: none; }
   td:first-child { color: var(--text); }
-  code { font-family: var(--mono); background: var(--bg3); padding: 1px 5px; border-radius: 3px; font-size: 0.85em; color: var(--orange); }
+  code {
+    font-family: var(--mono);
+    background: var(--bg3);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 0.85em;
+    color: var(--orange);
+  }
 
-  /* STEP LIST */
+  /* ── STEP LIST ────────────────────────────────────────── */
   .steps-list { counter-reset: sl; padding: 0; list-style: none; }
   .steps-list li {
     counter-increment: sl;
@@ -275,7 +292,7 @@
   .steps-list li p { color: #94a3b8; margin: 0; }
   .steps-list li strong { color: var(--text); }
 
-  /* DONE BUTTON */
+  /* ── DONE BUTTON ──────────────────────────────────────── */
   .done-btn {
     display: inline-flex;
     align-items: center;
@@ -294,7 +311,7 @@
   }
   .done-btn:hover, .done-btn.done { background: var(--green); color: #000; }
 
-  /* FLOW DIAGRAM */
+  /* ── FLOW DIAGRAM ─────────────────────────────────────── */
   .flow {
     background: var(--bg3);
     border: 1px solid var(--border);
@@ -309,6 +326,11 @@
   .fn { color: var(--green); font-weight: 700; }
   .fa { color: var(--accent); }
   .fl { color: var(--yellow); }
+
+  /* ── DIP TABLE ────────────────────────────────────────── */
+  .dip-table td { font-family: var(--mono); text-align: center; }
+  .dip-on  { color: var(--green); font-weight: 700; }
+  .dip-off { color: var(--muted); }
 
   p { color: #94a3b8; margin-bottom: 0.6rem; }
   strong { color: var(--text); }
@@ -332,7 +354,8 @@
   <div class="stack-badges">
     <span class="badge">Docker Desktop</span>
     <span class="badge">Windows 10/11</span>
-    <span class="badge">Sensor MQ-135 (simulado)</span>
+    <span class="badge">RobotDyn UNO+WiFi R3</span>
+    <span class="badge">Sensor MQ-135</span>
     <span class="badge">Puerto 1883 · 1880 · 8086 · 3000</span>
   </div>
 </header>
@@ -343,14 +366,14 @@
   <div class="progress">
     <span style="font-size:0.8rem;color:var(--muted)">Progreso</span>
     <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
-    <span class="progress-label" id="progressLabel">0 / 5 pasos</span>
+    <span class="progress-label" id="progressLabel">0 / 6 pasos</span>
   </div>
 
   <!-- FLUJO DE DATOS -->
   <div class="flow" style="margin-bottom:2rem">
-    <span class="fn">[inject 5s]</span> → <span class="fn">[Simular MQ-135]</span> → <span class="fn">[MQTT OUT sensor/gas]</span>
+    <span class="fn">[MQ-135 → ESP8266]</span> → <span class="fl">WiFi → MQTT sensor/gas</span>
                               ↓
-    <span class="fn">[MQTT IN sensor/gas]</span> → <span class="fn">[Validar 0–1023]</span> → <span class="fn">[payload InfluxDB]</span> → <span class="fn">[InfluxDB OUT]</span>
+    <span class="fn">[Mosquitto :1883]</span> → <span class="fn">[Node-RED :1880]</span> → <span class="fn">[InfluxDB :8086]</span>
                               ↓
     <span class="fl">bucket: gas_data · measurement: gas_level · field: value</span>
                               ↓
@@ -373,6 +396,7 @@
         <tr><th>Herramienta</th><th>Versión mínima</th><th>Verificar</th></tr>
         <tr><td>Docker Desktop</td><td>24.x</td><td><code>docker --version</code></td></tr>
         <tr><td>Docker Compose v2</td><td>incluido</td><td><code>docker compose version</code></td></tr>
+        <tr><td>Python 3.x</td><td>3.8+</td><td><code>python --version</code></td></tr>
         <tr><td>Puertos libres</td><td>—</td><td>1883 · 1880 · 8086 · 3000</td></tr>
       </table>
 
@@ -384,7 +408,6 @@ git clone https://github.com/roserocarlos/Ming.git
 cd Ming
 docker compose up -d</div>
       </div>
-
       <div class="callout info">Espere ~30 segundos al primer arranque. Docker descargará las imágenes la primera vez.</div>
 
       <div class="section-label">Verificar que los 4 contenedores están corriendo</div>
@@ -441,7 +464,7 @@ docker restart ming_nodered
         <li><p>Abra <a href="http://localhost:1880" target="_blank">localhost:1880</a></p></li>
         <li><p>Menú <strong>≡</strong> (esquina superior derecha) → <strong>Import</strong></p></li>
         <li><p>Clic en <strong>"select a file to import"</strong> → seleccione <code>nodered-flow.json</code> del repo</p></li>
-        <li><p>En el diálogo que aparece, marque <strong>replace</strong> en los dos config nodes:<br><code>Mosquitto Local</code> y <code>[v2.0] InfluxDB Local</code></p></li>
+        <li><p>En el diálogo marque <strong>replace</strong> en los dos config nodes: <code>Mosquitto Local</code> y <code>[v2.0] InfluxDB Local</code></p></li>
         <li><p>Clic en <strong>Import selected</strong></p></li>
       </ol>
 
@@ -464,17 +487,7 @@ docker restart ming_nodered
         <li><p>Los nodos MQTT deben mostrar indicador verde <strong>"connected"</strong></p></li>
       </ol>
 
-      <div class="callout ok">El flujo arranca automáticamente y publica un valor de gas simulado cada 5 segundos en el tópico <code>sensor/gas</code>, escribiendo en InfluxDB.</div>
-
-      <div class="section-label">Verificar en el panel de debug</div>
-      <p>En Node-RED, abra el panel de debug (ícono 🐛 a la derecha). Debe ver mensajes como:</p>
-      <div class="code-block">
-        <div class="code-header"><span class="code-lang">Debug Node-RED</span></div>
-        <div class="code-body"><span class="co">✅ Payload → InfluxDB : msg.payload : Object
-{ value: 429 }
-✅ Payload → InfluxDB : msg.payload : Object
-{ value: 387 }</span></div>
-      </div>
+      <div class="callout ok">El debug debe mostrar <code>{ value: 429 }</code> cada 5 segundos — el simulador está activo.</div>
       <p>Si aparece <strong style="color:var(--red)">❌ Error InfluxDB</strong>, el mensaje del debug indica exactamente qué falló y cómo resolverlo.</p>
 
       <button class="done-btn" onclick="markDone('s2', 2)">✓ Paso completado</button>
@@ -482,7 +495,7 @@ docker restart ming_nodered
   </div>
 
   <!-- ══════════════════════════════════
-       PASO 3 — INFLUXDB VERIFICAR
+       PASO 3 — INFLUXDB
   ═════════════════════════════════════ -->
   <div class="step" id="s3">
     <div class="step-header" onclick="toggle('s3')">
@@ -503,13 +516,13 @@ docker restart ming_nodered
       </ol>
       <div class="callout ok">Debe aparecer la gráfica con valores entre 250 y 650 cada 5 segundos.</div>
 
-      <div class="section-label">3.2 — Desde consola (verificación rápida)</div>
+      <div class="section-label">3.2 — Desde consola</div>
       <div class="code-block">
         <div class="code-header"><span class="code-lang">PowerShell</span><button class="copy-btn" onclick="copyBlock(this)">Copiar</button></div>
         <div class="code-body"><span class="cm"># Escribir un punto de prueba manualmente</span>
 docker exec -it ming_influxdb influx write --bucket gas_data --org myorg --token ming-token "gas_level value=888"
 
-<span class="cm"># Si no da error = InfluxDB funcionando correctamente</span></div>
+<span class="cm"># Sin error = InfluxDB funcionando correctamente</span></div>
       </div>
 
       <div class="section-label">Si el bucket gas_data no existe</div>
@@ -523,22 +536,22 @@ docker exec -it ming_influxdb influx write --bucket gas_data --org myorg --token
   </div>
 
   <!-- ══════════════════════════════════
-       PASO 4 — GRAFANA DATASOURCE
+       PASO 4 — GRAFANA
   ═════════════════════════════════════ -->
   <div class="step" id="s4">
     <div class="step-header" onclick="toggle('s4')">
       <div class="step-num">4</div>
-      <div class="step-title">Configurar Grafana — datasource InfluxDB</div>
+      <div class="step-title">Configurar Grafana — datasource e importar dashboard</div>
       <span class="step-arrow" id="arr-s4">▾</span>
     </div>
     <div class="step-body" id="body-s4">
 
+      <div class="section-label">4.1 — Agregar InfluxDB como fuente de datos</div>
       <ol class="steps-list">
         <li><p>Abra <a href="http://localhost:3000" target="_blank">localhost:3000</a> → login: <code>admin</code> / <code>admin</code></p></li>
         <li><p>Menú lateral → <strong>Connections</strong> → <strong>Data sources</strong> → <strong>Add data source</strong> → elija <strong>InfluxDB</strong></p></li>
         <li><p>Configure exactamente estos campos:</p></li>
       </ol>
-
       <table>
         <tr><th>Campo</th><th>Valor</th></tr>
         <tr><td>Query Language</td><td><strong>Flux</strong> ← importante, no InfluxQL</td></tr>
@@ -547,37 +560,19 @@ docker exec -it ming_influxdb influx write --bucket gas_data --org myorg --token
         <tr><td>Token</td><td><code>ming-token</code></td></tr>
         <tr><td>Default Bucket</td><td><code>gas_data</code></td></tr>
       </table>
-
       <div class="callout warn"><strong>Query Language debe ser Flux.</strong> Con InfluxQL no aparece el campo Token y la conexión fallará.</div>
-
       <ol class="steps-list" style="margin-top:1rem">
-        <li><p>Clic en <strong>Save & Test</strong></p></li>
-        <li><p>Debe aparecer: <strong style="color:var(--green)">✅ datasource is working — 3 buckets found</strong></p></li>
+        <li><p>Clic en <strong>Save & Test</strong> → debe aparecer <strong style="color:var(--green)">✅ datasource is working — 3 buckets found</strong></p></li>
       </ol>
 
-      <button class="done-btn" onclick="markDone('s4', 4)">✓ Paso completado</button>
-    </div>
-  </div>
-
-  <!-- ══════════════════════════════════
-       PASO 5 — GRAFANA DASHBOARD
-  ═════════════════════════════════════ -->
-  <div class="step" id="s5">
-    <div class="step-header" onclick="toggle('s5')">
-      <div class="step-num">5</div>
-      <div class="step-title">Importar el dashboard en Grafana</div>
-      <span class="step-arrow" id="arr-s5">▾</span>
-    </div>
-    <div class="step-body" id="body-s5">
-
+      <div class="section-label">4.2 — Importar el dashboard</div>
       <ol class="steps-list">
         <li><p>Menú lateral → <strong>Dashboards</strong> → <strong>Import</strong></p></li>
         <li><p>Clic en <strong>Upload dashboard JSON file</strong> → seleccione <code>grafana-dashboard.json</code> del repo</p></li>
         <li><p>En el selector <strong>DS_INFLUXDB</strong> → elija el datasource <strong>InfluxDB</strong> que acaba de crear</p></li>
         <li><p>Clic en <strong>Import</strong></p></li>
       </ol>
-
-      <div class="callout ok">El dashboard <strong>MING — Monitor Sensor Gas MQ-135</strong> queda disponible con auto-refresh de 5 segundos.</div>
+      <div class="callout ok">Dashboard <strong>MING — Monitor Sensor Gas MQ-135</strong> con auto-refresh de 5 segundos listo.</div>
 
       <div class="section-label">Paneles del dashboard</div>
       <table>
@@ -596,7 +591,173 @@ docker exec -it ming_influxdb influx write --bucket gas_data --org myorg --token
         <tr><td><span style="color:var(--red)">● Rojo</span></td><td>700 – 1023</td><td>Alerta</td></tr>
       </table>
 
+      <button class="done-btn" onclick="markDone('s4', 4)">✓ Paso completado</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       PASO 5 — ESP8266 FLASH
+  ═════════════════════════════════════ -->
+  <div class="step" id="s5">
+    <div class="step-header" onclick="toggle('s5')">
+      <div class="step-num">5</div>
+      <div class="step-title">Instalar ESPHome y flashear el ESP8266</div>
+      <span class="step-arrow" id="arr-s5">▾</span>
+    </div>
+    <div class="step-body" id="body-s5">
+
+      <div class="section-label">5.1 — Instalar ESPHome</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">PowerShell</span><button class="copy-btn" onclick="copyBlock(this)">Copiar</button></div>
+        <div class="code-body">pip install esphome
+
+<span class="cm"># Verificar instalación — usar siempre python -m esphome</span>
+<span class="cm"># evita bloqueos de Windows Defender</span>
+python -m esphome version</div>
+      </div>
+      <div class="callout warn">Usar siempre <code>python -m esphome</code> en lugar de <code>esphome</code> directamente — evita bloqueos de Windows Defender o Control de aplicaciones.</div>
+
+      <div class="section-label">5.2 — Editar gas-sensor.yaml</div>
+      <p>Cada grupo edita <strong>dos líneas</strong> del archivo <code>gas-sensor.yaml</code>:</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">gas-sensor.yaml — solo estas dos líneas</span></div>
+        <div class="code-body"><span class="cm"># Línea 1 — nombre único del AP WiFi de este grupo</span>
+    ssid: <span class="cs">"MING-Gas-G1"</span>    <span class="cm"># ← cambiar G1 por G2, G3 ... G10</span>
+
+<span class="cm"># Línea 2 — IP del PC donde corre Docker</span>
+  broker: <span class="cs">"192.168.0.252"</span>  <span class="cm"># ← resultado de ipconfig</span></div>
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">PowerShell — obtener IP del PC</span><button class="copy-btn" onclick="copyBlock(this)">Copiar</button></div>
+        <div class="code-body">ipconfig
+<span class="cm"># Buscar: Adaptador LAN inalámbrica Wi-Fi → Dirección IPv4</span></div>
+      </div>
+
+      <div class="section-label">5.3 — DIP switches — posición FLASH</div>
+      <p>Configurar antes de conectar el USB para cargar el firmware:</p>
+      <table class="dip-table">
+        <tr><th>SW1</th><th>SW2</th><th>SW3</th><th>SW4</th><th>SW5</th><th>SW6</th><th>SW7</th><th>SW8</th></tr>
+        <tr>
+          <td class="dip-off">OFF</td>
+          <td class="dip-off">OFF</td>
+          <td class="dip-off">OFF</td>
+          <td class="dip-off">OFF</td>
+          <td class="dip-on">ON</td>
+          <td class="dip-on">ON</td>
+          <td class="dip-on">ON</td>
+          <td class="dip-off">—</td>
+        </tr>
+      </table>
+
+      <div class="section-label">5.4 — Primera carga — web installer (Chrome/Edge)</div>
+      <ol class="steps-list">
+        <li><p>Abra <a href="https://web.esphome.io" target="_blank">web.esphome.io</a> en <strong>Chrome o Edge</strong> — no Firefox</p></li>
+        <li><p>Clic en <strong>Connect</strong> → seleccione <code>CH340 (COMx)</code></p></li>
+        <li><p>Clic en <strong>Prepare for first use</strong> — instala firmware base ESPHome en el ESP</p></li>
+        <li><p>Clic en <strong>Configure WiFi</strong> — el ESP queda en la red listo para OTA</p></li>
+      </ol>
+
+      <div class="section-label">5.5 — Carga por consola (COM directo — más confiable)</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">PowerShell</span><button class="copy-btn" onclick="copyBlock(this)">Copiar</button></div>
+        <div class="code-body"><span class="cm"># Con switches en FLASH y USB conectado</span>
+cd Ming
+python -m esphome run gas-sensor.yaml
+
+<span class="cm"># Si hay varios puertos COM, especificar el correcto</span>
+python -m esphome run gas-sensor.yaml --device COM9
+
+<span class="cm"># Ver logs del ESP en tiempo real por consola</span>
+python -m esphome logs gas-sensor.yaml --device COM9</div>
+      </div>
+
+      <div class="section-label">5.6 — DIP switches — posición RUN (después de flashear)</div>
+      <p>Solo cambia SW7 a OFF — el ESP arranca en modo operación normal:</p>
+      <table class="dip-table">
+        <tr><th>SW1</th><th>SW2</th><th>SW3</th><th>SW4</th><th>SW5</th><th>SW6</th><th>SW7</th><th>SW8</th></tr>
+        <tr>
+          <td class="dip-off">OFF</td>
+          <td class="dip-off">OFF</td>
+          <td class="dip-off">OFF</td>
+          <td class="dip-off">OFF</td>
+          <td class="dip-on">ON</td>
+          <td class="dip-on">ON</td>
+          <td class="dip-off">OFF</td>
+          <td class="dip-off">—</td>
+        </tr>
+      </table>
+      <div class="callout ok">Con SW7-OFF el ESP arranca, conecta al WiFi y publica en MQTT automáticamente cada 5 segundos.</div>
+
       <button class="done-btn" onclick="markDone('s5', 5)">✓ Paso completado</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       PASO 6 — SENSOR REAL
+  ═════════════════════════════════════ -->
+  <div class="step" id="s6">
+    <div class="step-header" onclick="toggle('s6')">
+      <div class="step-num">6</div>
+      <div class="step-title">Conectar sensor MQ-135 y verificar datos reales</div>
+      <span class="step-arrow" id="arr-s6">▾</span>
+    </div>
+    <div class="step-body" id="body-s6">
+
+      <div class="section-label">6.1 — Conexión del sensor a la placa</div>
+      <table>
+        <tr><th>Pin MQ-135</th><th>Pin placa</th><th>Cable</th></tr>
+        <tr><td>VCC</td><td><strong>5V</strong> del header</td><td>Rojo</td></tr>
+        <tr><td>GND</td><td>GND</td><td>Negro</td></tr>
+        <tr><td>AO</td><td>A0 (TOUT ESP8266) via divisor de voltaje</td><td>Verde</td></tr>
+        <tr><td>DO</td><td>No conectar</td><td>—</td></tr>
+      </table>
+      <div class="callout warn">
+        <strong>⚠️ Divisor de voltaje obligatorio en AO.</strong><br>
+        El MQ-135 entrega hasta 5V en AO pero el TOUT del ESP8266 solo acepta máximo 1V.<br>
+        Sin divisor puede dañar el ADC del ESP permanentemente.<br><br>
+        <strong>R1 = 10kΩ</strong> entre AO del sensor y pin A0 de la placa<br>
+        <strong>R2 = 2.2kΩ</strong> entre pin A0 y GND<br>
+        Resultado: 5V → 0.9V ✅ dentro del rango seguro
+      </div>
+
+      <div class="section-label">6.2 — Configurar WiFi por portal captivo</div>
+      <ol class="steps-list">
+        <li><p>Encender el ESP → levanta AP automáticamente: <code>MING-Gas-G1</code> (según número de grupo)</p></li>
+        <li><p>Conectarse al AP desde celular o PC → contraseña: <code>ming12345</code></p></li>
+        <li><p>Abrir <code>192.168.4.1</code> en el navegador → ingresar red WiFi y contraseña → <strong>Guardar</strong></p></li>
+        <li><p>El ESP se conecta y recuerda la red — próximos arranques son automáticos</p></li>
+      </ol>
+      <div class="callout info">Si la red guardada no está disponible, el ESP vuelve a levantar el AP después de 30 segundos de intentos fallidos.</div>
+
+      <div class="section-label">6.3 — Actualizar firmware por OTA (sin USB)</div>
+      <p>Una vez el ESP está en WiFi, todas las actualizaciones siguientes son por red:</p>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">PowerShell</span><button class="copy-btn" onclick="copyBlock(this)">Copiar</button></div>
+        <div class="code-body"><span class="cm"># Subir cambios al ESP por WiFi (sin tocar switches ni USB)</span>
+python -m esphome run gas-sensor.yaml --device 192.168.0.65
+
+<span class="cm"># Reemplazar 192.168.0.65 por la IP real del ESP
+# Ver IP en los logs o en la lista de dispositivos del router</span></div>
+      </div>
+
+      <div class="section-label">6.4 — Apagar el simulador en Node-RED</div>
+      <ol class="steps-list">
+        <li><p>Abra <a href="http://localhost:1880" target="_blank">localhost:1880</a></p></li>
+        <li><p>Clic en el cuadrado azul del nodo <strong>"Trigger cada 5s"</strong> para pausarlo</p></li>
+        <li><p>Clic en <strong>Deploy</strong> — ahora solo llegan datos del sensor físico</p></li>
+      </ol>
+
+      <div class="section-label">6.5 — Verificar datos reales en el debug</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Debug Node-RED — datos del sensor físico</span></div>
+        <div class="code-body"><span class="co">✅ Payload → InfluxDB : msg.payload : Object
+{ value: 861 }
+✅ Payload → InfluxDB : msg.payload : Object
+{ value: 743 }</span></div>
+      </div>
+      <div class="callout info">Valores altos (700–1023) son normales sin el divisor de voltaje instalado. Con el divisor R1/R2 los valores quedan en rango 200–700 según la concentración de gas en el ambiente.</div>
+
+      <button class="done-btn" onclick="markDone('s6', 6)">✓ Paso completado</button>
     </div>
   </div>
 
@@ -622,6 +783,34 @@ docker restart ming_nodered
 # Configuration nodes → InfluxDB Local → Token: ming-token → Update → Deploy</span></div>
       </div>
 
+      <div class="section-label">ESP8266 no publica en MQTT — broker no alcanzable</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">PowerShell</span><button class="copy-btn" onclick="copyBlock(this)">Copiar</button></div>
+        <div class="code-body"><span class="cm"># Verificar IP del PC en la red actual</span>
+ipconfig
+<span class="cm"># Buscar: Adaptador LAN inalámbrica Wi-Fi → Dirección IPv4
+# Actualizar broker: en gas-sensor.yaml con esa IP
+# Subir de nuevo por OTA o COM</span></div>
+      </div>
+
+      <div class="section-label">ESPHome bloqueado por Windows Defender</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">PowerShell</span><button class="copy-btn" onclick="copyBlock(this)">Copiar</button></div>
+        <div class="code-body"><span class="cm"># Usar python -m en lugar del ejecutable directo</span>
+python -m esphome version
+python -m esphome run gas-sensor.yaml --device COM9</div>
+      </div>
+
+      <div class="section-label">OTA falla — mDNS no resuelve en Windows</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">PowerShell</span><button class="copy-btn" onclick="copyBlock(this)">Copiar</button></div>
+        <div class="code-body"><span class="cm"># Usar IP directa en lugar del nombre .local</span>
+python -m esphome run gas-sensor.yaml --device 192.168.0.65
+
+<span class="cm"># Ver IP del ESP en los logs del serial</span>
+python -m esphome logs gas-sensor.yaml --device COM9</div>
+      </div>
+
       <div class="section-label">Bucket gas_data no encontrado</div>
       <div class="code-block">
         <div class="code-header"><span class="code-lang">PowerShell</span><button class="copy-btn" onclick="copyBlock(this)">Copiar</button></div>
@@ -630,9 +819,9 @@ docker restart ming_nodered
 
       <div class="section-label">Grafana muestra "No data"</div>
       <ol class="steps-list">
-        <li><p>Verifique que Node-RED tiene Deploy activo y los nodos MQTT dicen <strong>"connected"</strong></p></li>
-        <li><p>Cambie el rango de tiempo del dashboard a <strong>Last 1 hour</strong> para incluir datos anteriores</p></li>
-        <li><p>Verifique que el datasource usa <strong>Flux</strong> y URL <code>http://ming_influxdb:8086</code> (nombre del contenedor, no localhost)</p></li>
+        <li><p>Verificar que Node-RED tiene Deploy activo y nodos MQTT dicen <strong>"connected"</strong></p></li>
+        <li><p>Cambiar rango de tiempo del dashboard a <strong>Last 1 hour</strong> para incluir datos anteriores</p></li>
+        <li><p>Verificar que el datasource usa <strong>Flux</strong> y URL <code>http://ming_influxdb:8086</code> — no localhost</p></li>
       </ol>
 
       <div class="section-label">Verificar nombres exactos de los contenedores</div>
@@ -688,7 +877,7 @@ docker compose down -v</div>
   }
 
   function updateProgress() {
-    const total = 5;
+    const total = 6;
     const n = Object.keys(done).length;
     document.getElementById('progressFill').style.width = (n / total * 100) + '%';
     document.getElementById('progressLabel').textContent = n + ' / ' + total + ' pasos';
@@ -696,7 +885,7 @@ docker compose down -v</div>
 
   function copyBlock(btn) {
     const body = btn.closest('.code-block').querySelector('.code-body');
-    const text = body.innerText.replace(/^\s*#.*$/gm, line => line).trim();
+    const text = body.innerText.trim();
     navigator.clipboard.writeText(text).then(() => {
       const orig = btn.textContent;
       btn.textContent = '✓ Copiado';
